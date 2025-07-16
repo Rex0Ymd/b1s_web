@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>P2P 聊天（不加密）</title>
+  <title>P2P 聊天（修正版）</title>
   <style>
     body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
     #chat { height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
-    input, button { padding: 10px; margin-top: 10px; }
+    input, button { padding: 10px; margin-top: 10px; width: 100%; }
   </style>
 </head>
 <body>
-  <h2>P2P 聊天（不加密測試版）</h2>
+  <h2>P2P 聊天（修正版）</h2>
   <div id="chat"></div>
   <input id="messageInput" placeholder="輸入訊息">
   <button id="sendBtn" onclick="sendMessage()" disabled>送出</button>
@@ -36,7 +36,10 @@
     const chatDiv = document.getElementById("chat");
     const sendBtn = document.getElementById("sendBtn");
 
-    let localConnection = new RTCPeerConnection();
+    let localConnection = new RTCPeerConnection({
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+    });
+
     let dataChannel;
 
     function append(msg, isSelf) {
@@ -57,6 +60,13 @@
       }
     }
 
+    localConnection.oniceconnectionstatechange = () => {
+      console.log("ICE 狀態：", localConnection.iceConnectionState);
+    };
+    localConnection.onconnectionstatechange = () => {
+      console.log("連線狀態：", localConnection.connectionState);
+    };
+
     // 初始化連線
     roomRef.once("value", async snap => {
       if (snap.exists()) {
@@ -65,7 +75,7 @@
           dataChannel = event.channel;
           dataChannel.onmessage = e => append(e.data, false);
           dataChannel.onopen = () => {
-            console.log("✅ 已連線！");
+            console.log("✅ 資料通道已開啟");
             sendBtn.disabled = false;
           };
         };
@@ -74,7 +84,13 @@
         await localConnection.setRemoteDescription(new RTCSessionDescription(offer));
         const answer = await localConnection.createAnswer();
         await localConnection.setLocalDescription(answer);
-        roomRef.child("answer").set(answer);
+
+        // 等待 ICE 收集完成再寫入 answer
+        localConnection.onicecandidate = async e => {
+          if (!e.candidate) {
+            roomRef.child("answer").set(localConnection.localDescription.toJSON());
+          }
+        };
 
       } else {
         // 創建者
