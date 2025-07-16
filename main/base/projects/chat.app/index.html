@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>P2P 加密聊天</title>
+  <title>P2P 聊天（不加密）</title>
   <style>
     body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
     #chat { height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
@@ -10,34 +10,34 @@
   </style>
 </head>
 <body>
-  <h2>P2P 加密聊天</h2>
+  <h2>P2P 聊天（不加密測試版）</h2>
   <div id="chat"></div>
   <input id="messageInput" placeholder="輸入訊息">
-  <button onclick="sendMessage()">送出</button>
+  <button id="sendBtn" onclick="sendMessage()" disabled>送出</button>
+
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <script>
-    // Firebase 設定（請替換為你自己的）
+    // Firebase 設定
     const firebaseConfig = {
       apiKey: "AIzaSyBktU0zTENYrhASjX0-9317jjeOY9KxTEE",
       authDomain: "test-chat-room-cd4a6.firebaseapp.com",
       databaseURL: "https://test-chat-room-cd4a6-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "test-chat-room-cd4a6",
-      storageBucket: "test-chat-room-cd4a6.firebasestorage.app",
+      storageBucket: "test-chat-room-cd4a6.appspot.com",
       messagingSenderId: "537961446878",
-      appId: "1:537961446878:web:005751d2770817c0cdb14f",
-      measurementId: "G-W25R0SK9VQ"
-};
+      appId: "1:537961446878:web:005751d2770817c0cdb14f"
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const roomId = prompt("輸入聊天室代碼（兩人需相同）");
     const roomRef = db.ref("rooms/" + roomId);
     const chatDiv = document.getElementById("chat");
+    const sendBtn = document.getElementById("sendBtn");
 
     let localConnection = new RTCPeerConnection();
     let dataChannel;
-    let aesKey;
 
     function append(msg, isSelf) {
       const el = document.createElement("div");
@@ -48,50 +48,25 @@
 
     function sendMessage() {
       const msg = document.getElementById("messageInput").value;
-      encryptMessage(msg).then((enc) => {
-        dataChannel.send(JSON.stringify(enc));
+      if (dataChannel && dataChannel.readyState === "open") {
+        dataChannel.send(msg);
         append(msg, true);
-      });
-      document.getElementById("messageInput").value = '';
+        document.getElementById("messageInput").value = '';
+      } else {
+        console.warn("❗資料通道尚未開啟");
+      }
     }
 
-    async function encryptMessage(msg) {
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const encoded = new TextEncoder().encode(msg);
-      const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, aesKey, encoded);
-      return { iv: Array.from(iv), data: Array.from(new Uint8Array(ciphertext)) };
-    }
-
-    async function decryptMessage(enc) {
-      const iv = new Uint8Array(enc.iv);
-      const data = new Uint8Array(enc.data);
-      const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, aesKey, data);
-      return new TextDecoder().decode(decrypted);
-    }
-
-    async function generateKey() {
-      return await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
-    }
-
-    async function exportKey(key) {
-      const raw = await crypto.subtle.exportKey("raw", key);
-      return btoa(String.fromCharCode(...new Uint8Array(raw)));
-    }
-
-    async function importKey(base64) {
-      const raw = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-      return await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["encrypt", "decrypt"]);
-    }
-
-    // === 主程式開始 ===
+    // 初始化連線
     roomRef.once("value", async snap => {
       if (snap.exists()) {
-        // 已存在：加入者
+        // 加入者
         localConnection.ondatachannel = event => {
           dataChannel = event.channel;
-          dataChannel.onmessage = async (e) => {
-            const msg = await decryptMessage(JSON.parse(e.data));
-            append(msg, false);
+          dataChannel.onmessage = e => append(e.data, false);
+          dataChannel.onopen = () => {
+            console.log("✅ 已連線！");
+            sendBtn.disabled = false;
           };
         };
 
@@ -101,26 +76,20 @@
         await localConnection.setLocalDescription(answer);
         roomRef.child("answer").set(answer);
 
-        // 取得 AES 金鑰
-        const aesBase64 = (await roomRef.child("aesKey").get()).val();
-        aesKey = await importKey(aesBase64);
-
       } else {
         // 創建者
         dataChannel = localConnection.createDataChannel("chat");
-        dataChannel.onmessage = async (e) => {
-          const msg = await decryptMessage(JSON.parse(e.data));
-          append(msg, false);
+        dataChannel.onmessage = e => append(e.data, false);
+        dataChannel.onopen = () => {
+          console.log("✅ 資料通道開啟！");
+          sendBtn.disabled = false;
         };
 
         localConnection.onicecandidate = e => {
-          if (e.candidate) return;
-          roomRef.child("offer").set(localConnection.localDescription.toJSON());
+          if (!e.candidate) {
+            roomRef.child("offer").set(localConnection.localDescription.toJSON());
+          }
         };
-
-        aesKey = await generateKey();
-        const aesBase64 = await exportKey(aesKey);
-        roomRef.child("aesKey").set(aesBase64);
 
         const offer = await localConnection.createOffer();
         await localConnection.setLocalDescription(offer);
