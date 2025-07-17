@@ -6,8 +6,7 @@
   <title>P2P 加密聊天</title>
   <link rel="stylesheet" href="../../../CSS/style.css">
   <style>
-    #chat {height: 300px;overflow-y: auto;border: 1px solid #7700ff; /* 使用網站主題的紫色作邊框 */padding: 10px;margin-bottom: 10px;background-color: #1c0f2b; /* 與專案卡片背景色類似，營造黑暗氛圍 */color: #ccc; /* 文字維持淡灰色，與主體配色一致 */
-    }
+    #chat {height: 300px; overflow-y: auto; border: 1px solid #7700ff; padding: 10px;margin-bottom: 10px;background-color: #272727	; color: #ccc; }
   </style>
 </head>
 <body>
@@ -25,10 +24,14 @@
   </section>
   
   <div class="container">
-    <h2>P2P 聊天</h2>
-    <input id="messageInput" placeholder="輸入訊息">
-    <button id="sendBtn" onclick="sendMessage()" disabled>送出</button>
-    <div id="chat" class="chat-box"></div>
+    <h2>開始聊天</h2>
+    <section class="description">
+      <input id="messageInput" placeholder="輸入訊息">
+      <button id="sendBtn" onclick="sendMessage()" disabled>送出</button>
+    </section>
+    <section class="description">
+      <div id="chat" class="chat-box"></div>
+    </section>
   </div>
 
   <!-- Firebase + CryptoJS -->
@@ -37,7 +40,54 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <script>
-    function _0x5266(){var _0x10d03a=['10757496uAihUd','3156772cFcBIl','replace','4669110ZETecJ','toString','35514230KZWMDh','165341qPxDJu','22sGcZlc','33976zZLkjv','\x5cw+','10AdBWyK','split','3101yhmpGM','579381kfSOqT','4\x20D={14:\x2215-16\x22,17:\x22c-9-d-f.18.p\x22,19:\x221a://c-9-d-f-1b-1c.1d-1e.1f.1g\x22,1h:\x22c-9-d-f\x22,1i:\x22c-9-d-f.1j.p\x22,1k:\x22E\x22,1l:\x221:E:1m:1n\x22};F.1o(D);4\x20G=F.1p(),H=I(\x22輸入聊天室代碼（兩人需相同）\x22),q=I(\x22請輸入通訊密鑰（雙方需相同）\x22),7=G.1q(\x221r/\x22+H),g=h.r(\x229\x22),i=h.r(\x22i\x22),j=h.r(\x22j\x22),s=\x221s\x22+1t.1u().u(1v).1w(2,6);1x\x20b=\x22\x22,8,3=v\x201y({1z:[{1A:\x22J:J.l.1B.p:1C\x22}]});k\x20m(e,n){4\x20t=h.1D(\x221E\x22);t.1F=n?\x221G\x22:\x221H\x22,t.1I=(n?\x22🟢\x20我：\x22:\x22🔵\x20對方：\x22)+e,g.1J(t),g.1K=g.1L}k\x20w(e){x\x20y.K.w(e,q).u()}k\x20o(e){1M{4\x20n=y.K.o(e,q);x\x20n.u(y.1N.1O)||\x22(解密失敗)\x22}1P{x\x22(解密錯誤)\x22}}k\x201Q(){4\x20e=j.z;L(8&&\x221R\x22===8.1S){4\x20n=w(e);8.1T(n),m(e,!0),j.z=\x22\x22}M\x20N.1U(\x22資料通道尚未開啟\x22)}3.1V=(()=>{\x221W\x22===3.1X&&N.1Y(\x22🎉\x20已建立\x201Z\x20連線\x22)}),7.20(\x22z\x22,A\x20e=>{L(e.21()){b=\x22O\x22,3.22=(e=>{(8=e.23).P=(()=>i.Q=!1),8.R=(e=>m(o(e.S),!1))});4\x20e=(5\x207.a(\x22B\x22).24()).T();5\x203.U(v\x20V(e));4\x20n=5\x203.25();5\x203.W(n),3.X=(e=>{e.Y||7.a(`C/${s}`).Z(3.10.11())})}M{b=\x2212\x22,(8=3.26(\x229\x22)).P=(()=>i.Q=!1),8.R=(e=>m(o(e.S),!1)),3.X=(e=>{e.Y||7.a(\x22B\x22).Z(3.10.11())});4\x20e=5\x203.27();5\x203.W(e),7.a(\x22C\x22).28(\x2229\x22,A\x20e=>{4\x20n=e.T();n&&!3.2a&&5\x203.U(v\x20V(n))})}}),2b.2c(\x222d\x22,A()=>{\x2212\x22===b?5\x207.a(\x22B\x22).13():\x22O\x22===b&&5\x207.a(`C/${s}`).13()});'];_0x5266=function(){return _0x10d03a;};return _0x5266();}function _0x163b(_0x2a71a1,_0x32bd9e){var _0x5266e7=_0x5266();return _0x163b=function(_0x163ba9,_0x5cfe8a){_0x163ba9=_0x163ba9-0x70;var _0x1db130=_0x5266e7[_0x163ba9];return _0x1db130;},_0x163b(_0x2a71a1,_0x32bd9e);}var _0x31a969=_0x163b;(function(_0x3a3315,_0x1ac337){var _0x5abc91=_0x163b,_0x59b39b=_0x3a3315();while(!![]){try{var _0x1e57ea=parseInt(_0x5abc91(0x71))/0x1*(-parseInt(_0x5abc91(0x72))/0x2)+parseInt(_0x5abc91(0x78))/0x3+-parseInt(_0x5abc91(0x7b))/0x4*(parseInt(_0x5abc91(0x75))/0x5)+-parseInt(_0x5abc91(0x7a))/0x6+-parseInt(_0x5abc91(0x77))/0x7*(-parseInt(_0x5abc91(0x73))/0x8)+parseInt(_0x5abc91(0x7d))/0x9+parseInt(_0x5abc91(0x70))/0xa;if(_0x1e57ea===_0x1ac337)break;else _0x59b39b['push'](_0x59b39b['shift']());}catch(_0x43596b){_0x59b39b['push'](_0x59b39b['shift']());}}}(_0x5266,0xe9154),eval(function(_0x4c5541,_0x58c705,_0x366e43,_0x4d20b3,_0xd5743,_0x2f97e7){var _0x288d1a=_0x163b;_0xd5743=function(_0x51d451){var _0x46aec8=_0x163b;return(_0x51d451<_0x58c705?'':_0xd5743(parseInt(_0x51d451/_0x58c705)))+((_0x51d451=_0x51d451%_0x58c705)>0x23?String['fromCharCode'](_0x51d451+0x1d):_0x51d451[_0x46aec8(0x7e)](0x24));};if(!''[_0x288d1a(0x7c)](/^/,String)){while(_0x366e43--)_0x2f97e7[_0xd5743(_0x366e43)]=_0x4d20b3[_0x366e43]||_0xd5743(_0x366e43);_0x4d20b3=[function(_0x2c2717){return _0x2f97e7[_0x2c2717];}],_0xd5743=function(){var _0x51e942=_0x288d1a;return _0x51e942(0x74);},_0x366e43=0x1;};while(_0x366e43--)if(_0x4d20b3[_0x366e43])_0x4c5541=_0x4c5541['replace'](new RegExp('\x5cb'+_0xd5743(_0x366e43)+'\x5cb','g'),_0x4d20b3[_0x366e43]);return _0x4c5541;}(_0x31a969(0x79),0x3e,0x8a,'|||localConnection|const|await||roomRef|dataChannel|chat|child|role|test|room||cd4a6|chatDiv|document|sendBtn|messageInput|function||append||decrypt|com|secretKey|getElementById|userId||toString|new|encrypt|return|CryptoJS|value|async|offer|answers|firebaseConfig|537961446878|firebase|db|roomId|prompt|stun|AES|if|else|console|joiner|onopen|disabled|onmessage|data|val|setRemoteDescription|RTCSessionDescription|setLocalDescription|onicecandidate|candidate|set|localDescription|toJSON|creator|remove|apiKey|AIzaSyBktU0zTENYrhASjX0|9317jjeOY9KxTEE|authDomain|firebaseapp|databaseURL|https|default|rtdb|europe|west1|firebasedatabase|app|projectId|storageBucket|appspot|messagingSenderId|appId|web|005751d2770817c0cdb14f|initializeApp|database|ref|rooms|user_|Math|random|36|substr|let|RTCPeerConnection|iceServers|urls|google|19302|createElement|div|className|self|peer|textContent|appendChild|scrollTop|scrollHeight|try|enc|Utf8|catch|sendMessage|open|readyState|send|warn|onconnectionstatechange|connected|connectionState|log|WebRTC|once|exists|ondatachannel|channel|get|createAnswer|createDataChannel|createOffer|on|child_added|remoteDescription|window|addEventListener|beforeunload'[_0x31a969(0x76)]('|'),0x0,{})));
+    function _0x5266() {
+    var _0x10d03a = ['10757496uAihUd', '3156772cFcBIl', 'replace', '4669110ZETecJ', 'toString', '35514230KZWMDh', '165341qPxDJu', '22sGcZlc', '33976zZLkjv', '\x5cw+', '10AdBWyK', 'split', '3101yhmpGM', '579381kfSOqT', '4\x20D={14:\x2215-16\x22,17:\x22c-9-d-f.18.p\x22,19:\x221a://c-9-d-f-1b-1c.1d-1e.1f.1g\x22,1h:\x22c-9-d-f\x22,1i:\x22c-9-d-f.1j.p\x22,1k:\x22E\x22,1l:\x221:E:1m:1n\x22};F.1o(D);4\x20G=F.1p(),H=I(\x22輸入聊天室代碼（兩人需相同）\x22),q=I(\x22請輸入通訊密鑰（雙方需相同）\x22),7=G.1q(\x221r/\x22+H),g=h.r(\x229\x22),i=h.r(\x22i\x22),j=h.r(\x22j\x22),s=\x221s\x22+1t.1u().u(1v).1w(2,6);1x\x20b=\x22\x22,8,3=v\x201y({1z:[{1A:\x22J:J.l.1B.p:1C\x22}]});k\x20m(e,n){4\x20t=h.1D(\x221E\x22);t.1F=n?\x221G\x22:\x221H\x22,t.1I=(n?\x22🟢\x20我：\x22:\x22🔵\x20對方：\x22)+e,g.1J(t),g.1K=g.1L}k\x20w(e){x\x20y.K.w(e,q).u()}k\x20o(e){1M{4\x20n=y.K.o(e,q);x\x20n.u(y.1N.1O)||\x22(解密失敗)\x22}1P{x\x22(解密錯誤)\x22}}k\x201Q(){4\x20e=j.z;L(8&&\x221R\x22===8.1S){4\x20n=w(e);8.1T(n),m(e,!0),j.z=\x22\x22}M\x20N.1U(\x22資料通道尚未開啟\x22)}3.1V=(()=>{\x221W\x22===3.1X&&N.1Y(\x22🎉\x20已建立\x201Z\x20連線\x22)}),7.20(\x22z\x22,A\x20e=>{L(e.21()){b=\x22O\x22,3.22=(e=>{(8=e.23).P=(()=>i.Q=!1),8.R=(e=>m(o(e.S),!1))});4\x20e=(5\x207.a(\x22B\x22).24()).T();5\x203.U(v\x20V(e));4\x20n=5\x203.25();5\x203.W(n),3.X=(e=>{e.Y||7.a(`C/${s}`).Z(3.10.11())})}M{b=\x2212\x22,(8=3.26(\x229\x22)).P=(()=>i.Q=!1),8.R=(e=>m(o(e.S),!1)),3.X=(e=>{e.Y||7.a(\x22B\x22).Z(3.10.11())});4\x20e=5\x203.27();5\x203.W(e),7.a(\x22C\x22).28(\x2229\x22,A\x20e=>{4\x20n=e.T();n&&!3.2a&&5\x203.U(v\x20V(n))})}}),2b.2c(\x222d\x22,A()=>{\x2212\x22===b?5\x207.a(\x22B\x22).13():\x22O\x22===b&&5\x207.a(`C/${s}`).13()});'];
+    _0x5266 = function() {
+        return _0x10d03a;
+    };
+    return _0x5266();
+}
+
+function _0x163b(_0x2a71a1, _0x32bd9e) {
+    var _0x5266e7 = _0x5266();
+    return _0x163b = function(_0x163ba9, _0x5cfe8a) {
+        _0x163ba9 = _0x163ba9 - 0x70;
+        var _0x1db130 = _0x5266e7[_0x163ba9];
+        return _0x1db130;
+    }, _0x163b(_0x2a71a1, _0x32bd9e);
+}
+var _0x31a969 = _0x163b;
+(function(_0x3a3315, _0x1ac337) {
+    var _0x5abc91 = _0x163b,
+        _0x59b39b = _0x3a3315();
+    while (!![]) {
+        try {
+            var _0x1e57ea = parseInt(_0x5abc91(0x71)) / 0x1 * (-parseInt(_0x5abc91(0x72)) / 0x2) + parseInt(_0x5abc91(0x78)) / 0x3 + -parseInt(_0x5abc91(0x7b)) / 0x4 * (parseInt(_0x5abc91(0x75)) / 0x5) + -parseInt(_0x5abc91(0x7a)) / 0x6 + -parseInt(_0x5abc91(0x77)) / 0x7 * (-parseInt(_0x5abc91(0x73)) / 0x8) + parseInt(_0x5abc91(0x7d)) / 0x9 + parseInt(_0x5abc91(0x70)) / 0xa;
+            if (_0x1e57ea === _0x1ac337) break;
+            else _0x59b39b['push'](_0x59b39b['shift']());
+        } catch (_0x43596b) {
+            _0x59b39b['push'](_0x59b39b['shift']());
+        }
+    }
+}(_0x5266, 0xe9154), eval(function(_0x4c5541, _0x58c705, _0x366e43, _0x4d20b3, _0xd5743, _0x2f97e7) {
+    var _0x288d1a = _0x163b;
+    _0xd5743 = function(_0x51d451) {
+        var _0x46aec8 = _0x163b;
+        return (_0x51d451 < _0x58c705 ? '' : _0xd5743(parseInt(_0x51d451 / _0x58c705))) + ((_0x51d451 = _0x51d451 % _0x58c705) > 0x23 ? String['fromCharCode'](_0x51d451 + 0x1d) : _0x51d451[_0x46aec8(0x7e)](0x24));
+    };
+    if (!'' [_0x288d1a(0x7c)](/^/, String)) {
+        while (_0x366e43--) _0x2f97e7[_0xd5743(_0x366e43)] = _0x4d20b3[_0x366e43] || _0xd5743(_0x366e43);
+        _0x4d20b3 = [function(_0x2c2717) {
+            return _0x2f97e7[_0x2c2717];
+        }], _0xd5743 = function() {
+            var _0x51e942 = _0x288d1a;
+            return _0x51e942(0x74);
+        }, _0x366e43 = 0x1;
+    };
+    while (_0x366e43--)
+        if (_0x4d20b3[_0x366e43]) _0x4c5541 = _0x4c5541['replace'](new RegExp('\x5cb' + _0xd5743(_0x366e43) + '\x5cb', 'g'), _0x4d20b3[_0x366e43]);
+    return _0x4c5541;
+}(_0x31a969(0x79), 0x3e, 0x8a, '|||localConnection|const|await||roomRef|dataChannel|chat|child|role|test|room||cd4a6|chatDiv|document|sendBtn|messageInput|function||append||decrypt|com|secretKey|getElementById|userId||toString|new|encrypt|return|CryptoJS|value|async|offer|answers|firebaseConfig|537961446878|firebase|db|roomId|prompt|stun|AES|if|else|console|joiner|onopen|disabled|onmessage|data|val|setRemoteDescription|RTCSessionDescription|setLocalDescription|onicecandidate|candidate|set|localDescription|toJSON|creator|remove|apiKey|AIzaSyBktU0zTENYrhASjX0|9317jjeOY9KxTEE|authDomain|firebaseapp|databaseURL|https|default|rtdb|europe|west1|firebasedatabase|app|projectId|storageBucket|appspot|messagingSenderId|appId|web|005751d2770817c0cdb14f|initializeApp|database|ref|rooms|user_|Math|random|36|substr|let|RTCPeerConnection|iceServers|urls|google|19302|createElement|div|className|self|peer|textContent|appendChild|scrollTop|scrollHeight|try|enc|Utf8|catch|sendMessage|open|readyState|send|warn|onconnectionstatechange|connected|connectionState|log|WebRTC|once|exists|ondatachannel|channel|get|createAnswer|createDataChannel|createOffer|on|child_added|remoteDescription|window|addEventListener|beforeunload' [_0x31a969(0x76)]('|'), 0x0, {})));
   </script>
   
   <footer>
@@ -46,3 +96,4 @@
   
 </body>
 </html>
+
