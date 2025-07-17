@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>P2P 聊天（最終修正版）</title>
+  <title>P2P 聊天（加密版）</title>
   <style>
     body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
     #chat { height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
@@ -10,13 +10,15 @@
   </style>
 </head>
 <body>
-  <h2>P2P 聊天（最終修正版）</h2>
+  <h2>P2P 聊天（加密版）</h2>
   <div id="chat"></div>
   <input id="messageInput" placeholder="輸入訊息">
   <button id="sendBtn" onclick="sendMessage()" disabled>送出</button>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBktU0zTENYrhASjX0-9317jjeOY9KxTEE",
@@ -31,6 +33,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const roomId = prompt("輸入聊天室代碼（兩人需相同）");
+    const secretKey = prompt("請輸入通訊密鑰（雙方需相同）");
     const roomRef = db.ref("rooms/" + roomId);
 
     const chatDiv = document.getElementById("chat");
@@ -50,11 +53,25 @@
       chatDiv.scrollTop = chatDiv.scrollHeight;
     }
 
+    function encrypt(text) {
+      return CryptoJS.AES.encrypt(text, secretKey).toString();
+    }
+
+    function decrypt(cipherText) {
+      try {
+        const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+        return bytes.toString(CryptoJS.enc.Utf8) || "(解密失敗)";
+      } catch (e) {
+        return "(解密錯誤)";
+      }
+    }
+
     function sendMessage() {
       const msg = messageInput.value;
       if (dataChannel && dataChannel.readyState === "open") {
-        dataChannel.send(msg);
-        append(msg, true);
+        const encrypted = encrypt(msg);
+        dataChannel.send(encrypted);
+        append(msg, true); // 顯示原文
         messageInput.value = '';
       } else {
         console.warn("❗資料通道尚未開啟");
@@ -69,49 +86,45 @@
       console.log("連線狀態：", localConnection.connectionState);
       if (localConnection.connectionState === "connected") {
         console.log("🎉 連線成功！");
-        if (dataChannel?.readyState !== "open") {
-          console.warn("⚠️ 連線成功但通道尚未開啟");
-        }
       }
     };
 
-    // 初始化連線
     roomRef.once("value", async snap => {
       if (snap.exists()) {
         // 加入者
         localConnection.ondatachannel = event => {
           dataChannel = event.channel;
-
           dataChannel.onopen = () => {
             console.log("✅ 加入者資料通道已開啟");
             sendBtn.disabled = false;
           };
-
-          dataChannel.onmessage = e => append(e.data, false);
+          dataChannel.onmessage = e => {
+            const msg = decrypt(e.data);
+            append(msg, false);
+          };
         };
 
         const offer = (await roomRef.child("offer").get()).val();
         await localConnection.setRemoteDescription(new RTCSessionDescription(offer));
         const answer = await localConnection.createAnswer();
         await localConnection.setLocalDescription(answer);
-
         localConnection.onicecandidate = e => {
           if (!e.candidate) {
             roomRef.child("answer").set(localConnection.localDescription.toJSON());
           }
         };
-
       } else {
         // 創建者
         dataChannel = localConnection.createDataChannel("chat");
 
-        // ✅ 第一時間就綁定事件
         dataChannel.onopen = () => {
           console.log("✅ 創建者資料通道已開啟");
           sendBtn.disabled = false;
         };
-
-        dataChannel.onmessage = e => append(e.data, false);
+        dataChannel.onmessage = e => {
+          const msg = decrypt(e.data);
+          append(msg, false);
+        };
 
         localConnection.onicecandidate = e => {
           if (!e.candidate) {
