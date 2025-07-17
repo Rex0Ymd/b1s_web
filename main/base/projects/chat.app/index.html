@@ -26,140 +26,18 @@
   
   <div class="container">
     <h2>P2P 聊天</h2>
-    <div id="chat" class="chat-box"></div>
     <input id="messageInput" placeholder="輸入訊息">
     <button id="sendBtn" onclick="sendMessage()" disabled>送出</button>
+    <div id="chat" class="chat-box"></div>
   </div>
 
   <!-- Firebase + CryptoJS -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBktU0zTENYrhASjX0-9317jjeOY9KxTEE",
-      authDomain: "test-chat-room-cd4a6.firebaseapp.com",
-      databaseURL: "https://test-chat-room-cd4a6-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "test-chat-room-cd4a6",
-      storageBucket: "test-chat-room-cd4a6.appspot.com",
-      messagingSenderId: "537961446878",
-      appId: "1:537961446878:web:005751d2770817c0cdb14f"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const roomId = prompt("輸入聊天室代碼（兩人需相同）");
-    const secretKey = prompt("請輸入通訊密鑰（雙方需相同）");
-    const roomRef = db.ref("rooms/" + roomId);
-
-    const chatDiv = document.getElementById("chat");
-    const sendBtn = document.getElementById("sendBtn");
-    const messageInput = document.getElementById("messageInput");
-
-    const userId = "user_" + Math.random().toString(36).substr(2, 6);
-    let role = "";
-    let dataChannel;
-
-    let localConnection = new RTCPeerConnection({
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
-    });
-
-    function append(msg, isSelf) {
-      const el = document.createElement("div");
-      el.className = isSelf ? "self" : "peer";
-      el.textContent = (isSelf ? "🟢 我：" : "🔵 對方：") + msg;
-      chatDiv.appendChild(el);
-      chatDiv.scrollTop = chatDiv.scrollHeight;
-    }
-
-    function encrypt(text) {
-      return CryptoJS.AES.encrypt(text, secretKey).toString();
-    }
-
-    function decrypt(cipherText) {
-      try {
-        const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
-        return bytes.toString(CryptoJS.enc.Utf8) || "(解密失敗)";
-      } catch {
-        return "(解密錯誤)";
-      }
-    }
-
-    function sendMessage() {
-      const msg = messageInput.value;
-      if (dataChannel && dataChannel.readyState === "open") {
-        const encrypted = encrypt(msg);
-        dataChannel.send(encrypted);
-        append(msg, true);
-        messageInput.value = '';
-      } else {
-        console.warn("資料通道尚未開啟");
-      }
-    }
-
-    localConnection.onconnectionstatechange = () => {
-      if (localConnection.connectionState === "connected") {
-        console.log("🎉 已建立 WebRTC 連線");
-      }
-    };
-
-    // 進入房間邏輯
-    roomRef.once("value", async snap => {
-      if (snap.exists()) {
-        // 加入者
-        role = "joiner";
-        localConnection.ondatachannel = event => {
-          dataChannel = event.channel;
-          dataChannel.onopen = () => sendBtn.disabled = false;
-          dataChannel.onmessage = e => append(decrypt(e.data), false);
-        };
-
-        const offer = (await roomRef.child("offer").get()).val();
-        await localConnection.setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await localConnection.createAnswer();
-        await localConnection.setLocalDescription(answer);
-
-        localConnection.onicecandidate = e => {
-          if (!e.candidate) {
-            roomRef.child(`answers/${userId}`).set(localConnection.localDescription.toJSON());
-          }
-        };
-
-      } else {
-        // 創建者
-        role = "creator";
-        dataChannel = localConnection.createDataChannel("chat");
-        dataChannel.onopen = () => sendBtn.disabled = false;
-        dataChannel.onmessage = e => append(decrypt(e.data), false);
-
-        localConnection.onicecandidate = e => {
-          if (!e.candidate) {
-            roomRef.child(`offer`).set(localConnection.localDescription.toJSON());
-          }
-        };
-
-        const offer = await localConnection.createOffer();
-        await localConnection.setLocalDescription(offer);
-
-        roomRef.child("answers").on("child_added", async snap => {
-          const answer = snap.val();
-          if (answer && !localConnection.remoteDescription) {
-            await localConnection.setRemoteDescription(new RTCSessionDescription(answer));
-          }
-        });
-      }
-    });
-
-    // 離開聊天室即刪除自己節點
-    window.addEventListener("beforeunload", async () => {
-      if (role === "creator") {
-        await roomRef.child("offer").remove();
-      } else if (role === "joiner") {
-        await roomRef.child(`answers/${userId}`).remove();
-      }
-    });
-  </script>
+  eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('<!--1q+m--><8 C="n://Q.R.d/S/9.6.1/o-T-U.h"></8><8 C="n://Q.R.d/S/9.6.1/o-V-U.h"></8><8 C="n://1r.1s.d/1t/1u/W-h/4.1.1/W-h.1v.h"></8><8>0 X={1w:"1x-1y",1z:"p-f-q-r.1A.d",1B:"n://p-f-q-r-1C-1D.1E-1F.1G.T",1H:"p-f-q-r",1I:"p-f-q-r.1J.d",1K:"Y",1L:"1:Y:1M:1N"};o.1O(X);0 Z=o.V();0 10=11("輸入聊天室代碼（兩人需相同）");0 D=11("請輸入通訊密鑰（雙方需相同）");0 a=Z.1P("1Q/"+10);0 s=t.E("f");0 u=t.E("u");0 v=t.E("v");0 F="1R"+1S.1T().G(1U).1V(2,6);H i="";H 5;H 3=I 1W({1X:[{1Y:"12:12.l.1Z.d:20"}]});w x(j,J){0 y=t.21("22");y.23=J?"24":"25";y.26=(J?"🟢 我：":"🔵 對方：")+j;s.27(y);s.28=s.29}w K(13){L m.14.K(13,D).G()}w z(15){2a{0 16=m.14.z(15,D);L 16.G(m.2b.2c)||"(解密失敗)"}2d{L"(解密錯誤)"}}w 2e(){0 j=v.M;b(5&&5.2f==="2g"){0 17=K(j);5.2h(17);x(j,2i);v.M=\'\'}N{18.2j("資料通道尚未開啟")}}3.2k=()=>{b(3.2l==="2m"){18.2n("🎉 已建立 2o 連線")}};a.2p("M",O A=>{b(A.2q()){i="19";3.2r=1a=>{5=1a.2s;5.1b=()=>u.1c=B;5.1d=e=>x(z(e.1e),B)};0 c=(7 a.g("c").2t()).1f();7 3.1g(I 1h(c));0 k=7 3.2u();7 3.1i(k);3.1j=e=>{b(!e.1k){a.g(`P/${F}`).1l(3.1m.1n())}}}N{i="1o";5=3.2v("f");5.1b=()=>u.1c=B;5.1d=e=>x(z(e.1e),B);3.1j=e=>{b(!e.1k){a.g(`c`).1l(3.1m.1n())}};0 c=7 3.2w();7 3.1i(c);a.g("P").2x("2y",O A=>{0 k=A.1f();b(k&&!3.2z){7 3.1g(I 1h(k))}})}});2A.2B("2C",O()=>{b(i==="1o"){7 a.g("c").1p()}N b(i==="19"){7 a.g(`P/${F}`).1p()}});</8>',62,163,'const|||localConnection||dataChannel||await|script||roomRef|if|offer|com||chat|child|js|role|msg|answer||CryptoJS|https|firebase|test|room|cd4a6|chatDiv|document|sendBtn|messageInput|function|append|el|decrypt|snap|false|src|secretKey|getElementById|userId|toString|let|new|isSelf|encrypt|return|value|else|async|answers|www|gstatic|firebasejs|app|compat|database|crypto|firebaseConfig|537961446878|db|roomId|prompt|stun|text|AES|cipherText|bytes|encrypted|console|joiner|event|onopen|disabled|onmessage|data|val|setRemoteDescription|RTCSessionDescription|setLocalDescription|onicecandidate|candidate|set|localDescription|toJSON|creator|remove|Firebase|cdnjs|cloudflare|ajax|libs|min|apiKey|AIzaSyBktU0zTENYrhASjX0|9317jjeOY9KxTEE|authDomain|firebaseapp|databaseURL|default|rtdb|europe|west1|firebasedatabase|projectId|storageBucket|appspot|messagingSenderId|appId|web|005751d2770817c0cdb14f|initializeApp|ref|rooms|user_|Math|random|36|substr|RTCPeerConnection|iceServers|urls|google|19302|createElement|div|className|self|peer|textContent|appendChild|scrollTop|scrollHeight|try|enc|Utf8|catch|sendMessage|readyState|open|send|true|warn|onconnectionstatechange|connectionState|connected|log|WebRTC|once|exists|ondatachannel|channel|get|createAnswer|createDataChannel|createOffer|on|child_added|remoteDescription|window|addEventListener|beforeunload'.split('|'),0,{}))
+  
+  <footer>
+    <p>&copy; 2025 Bones Security Technology. All rights reserved.</p>
+  </footer>
+  
 </body>
 </html>
 

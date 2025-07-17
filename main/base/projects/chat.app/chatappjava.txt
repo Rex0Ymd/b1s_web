@@ -1,0 +1,129 @@
+<!-- Firebase + CryptoJS -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBktU0zTENYrhASjX0-9317jjeOY9KxTEE",
+      authDomain: "test-chat-room-cd4a6.firebaseapp.com",
+      databaseURL: "https://test-chat-room-cd4a6-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "test-chat-room-cd4a6",
+      storageBucket: "test-chat-room-cd4a6.appspot.com",
+      messagingSenderId: "537961446878",
+      appId: "1:537961446878:web:005751d2770817c0cdb14f"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const roomId = prompt("輸入聊天室代碼（兩人需相同）");
+    const secretKey = prompt("請輸入通訊密鑰（雙方需相同）");
+    const roomRef = db.ref("rooms/" + roomId);
+
+    const chatDiv = document.getElementById("chat");
+    const sendBtn = document.getElementById("sendBtn");
+    const messageInput = document.getElementById("messageInput");
+
+    const userId = "user_" + Math.random().toString(36).substr(2, 6);
+    let role = "";
+    let dataChannel;
+
+    let localConnection = new RTCPeerConnection({
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+    });
+
+    function append(msg, isSelf) {
+      const el = document.createElement("div");
+      el.className = isSelf ? "self" : "peer";
+      el.textContent = (isSelf ? "🟢 我：" : "🔵 對方：") + msg;
+      chatDiv.appendChild(el);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    function encrypt(text) {
+      return CryptoJS.AES.encrypt(text, secretKey).toString();
+    }
+
+    function decrypt(cipherText) {
+      try {
+        const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+        return bytes.toString(CryptoJS.enc.Utf8) || "(解密失敗)";
+      } catch {
+        return "(解密錯誤)";
+      }
+    }
+
+    function sendMessage() {
+      const msg = messageInput.value;
+      if (dataChannel && dataChannel.readyState === "open") {
+        const encrypted = encrypt(msg);
+        dataChannel.send(encrypted);
+        append(msg, true);
+        messageInput.value = '';
+      } else {
+        console.warn("資料通道尚未開啟");
+      }
+    }
+
+    localConnection.onconnectionstatechange = () => {
+      if (localConnection.connectionState === "connected") {
+        console.log("🎉 已建立 WebRTC 連線");
+      }
+    };
+
+    // 進入房間邏輯
+    roomRef.once("value", async snap => {
+      if (snap.exists()) {
+        // 加入者
+        role = "joiner";
+        localConnection.ondatachannel = event => {
+          dataChannel = event.channel;
+          dataChannel.onopen = () => sendBtn.disabled = false;
+          dataChannel.onmessage = e => append(decrypt(e.data), false);
+        };
+
+        const offer = (await roomRef.child("offer").get()).val();
+        await localConnection.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await localConnection.createAnswer();
+        await localConnection.setLocalDescription(answer);
+
+        localConnection.onicecandidate = e => {
+          if (!e.candidate) {
+            roomRef.child(`answers/${userId}`).set(localConnection.localDescription.toJSON());
+          }
+        };
+
+      } else {
+        // 創建者
+        role = "creator";
+        dataChannel = localConnection.createDataChannel("chat");
+        dataChannel.onopen = () => sendBtn.disabled = false;
+        dataChannel.onmessage = e => append(decrypt(e.data), false);
+
+        localConnection.onicecandidate = e => {
+          if (!e.candidate) {
+            roomRef.child(`offer`).set(localConnection.localDescription.toJSON());
+          }
+        };
+
+        const offer = await localConnection.createOffer();
+        await localConnection.setLocalDescription(offer);
+
+        roomRef.child("answers").on("child_added", async snap => {
+          const answer = snap.val();
+          if (answer && !localConnection.remoteDescription) {
+            await localConnection.setRemoteDescription(new RTCSessionDescription(answer));
+          }
+        });
+      }
+    });
+
+    // 離開聊天室即刪除自己節點
+    window.addEventListener("beforeunload", async () => {
+      if (role === "creator") {
+        await roomRef.child("offer").remove();
+      } else if (role === "joiner") {
+        await roomRef.child(`answers/${userId}`).remove();
+      }
+    });
+  </script>
