@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Emoji 圖片加密（8 執行緒＋分段512＋進度）</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 1rem; }
+    input, button, textarea { width: 100%; margin: .5rem 0; }
+    textarea { height: 160px; font-family: monospace; }
+    img { max-width: 100%; margin-top: 1rem; border: 1px solid #ccc; }
+    .info { font-size: .9rem; color: #333; }
+  </style>
+</head>
+<body>
+  <h2>Emoji 圖片加密（8 執行緒＋512 分段＋進度）</h2>
+
+  <label>1. 選擇圖片：</label>
+  <input type="file" id="imageInput" accept="image/*">
+
+  <label>2. 輸入密鑰：</label>
+  <input type="text" id="secretKey" placeholder="雙方相同才能解密">
+
+  <button id="encryptBtn" onclick="encryptImage()">加密並轉成 Emoji</button>
+  <div class="info" id="encryptInfo">尚未開始</div>
+  <textarea id="emojiOutput" placeholder="加密後的 Emoji 將在此顯示"></textarea>
+
+  <hr>
+
+  <label>3. 將上面 Emoji 貼到這裡：</label>
+  <textarea id="emojiInput" placeholder="貼入 Emoji"></textarea>
+  <button id="decryptBtn" onclick="decryptImage()" disabled>解密並顯示圖片</button>
+  <img id="resultImage" alt="解密後圖片">
+
+  <!-- 載入 CryptoJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    // ─── AES + Emoji 工具函式 ───
+    function mulberry32(a) {
+      return function() {
+        a |= 0; a += 0x6D2B79F5 | 0;
+        let t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = (t + Math.imul(t ^ t >>> 7, 61 | t)) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    function generateEmojis(seed) {
+      const ranges = [
+        [0x1F600,0x1F636],[0x1F300,0x1F320],
+        [0x1F680,0x1F6A3],[0x2700,0x2752],
+        [0x2600,0x2613]
+      ];
+      const base = [], sep = [], rng = mulberry32(seed);
+      for (let [s,e] of ranges) {
+        for (let cp = s; cp <= e; cp++) {
+          if (!(cp <= 0x1F || cp === 0x7F ||
+                (cp >= 0xFE00 && cp <= 0xFE0F) ||
+                (cp >= 0x200D && cp <= 0x200F))) {
+            const ch = String.fromCodePoint(cp);
+            (rng()<0.5 ? base : sep).push(ch);
+          }
+        }
+      }
+      return [base, sep];
+    }
+    function intToEmoji(code, base) {
+      let out = "", b = base.length;
+      if (!code) return base[0];
+      while (code > 0) {
+        out = base[code % b] + out;
+        code = Math.floor(code / b);
+      }
+      return out;
+    }
+
+    // ─── 主流程 ───
+    async function encryptImage() {
+      const file = document.getElementById("imageInput").files[0];
+      const key  = document.getElementById("secretKey").value.trim();
+      const info = document.getElementById("encryptInfo");
+      const out  = document.getElementById("emojiOutput");
+      const btn  = document.getElementById("encryptBtn");
+      const decBtn = document.getElementById("decryptBtn");
+      info.textContent = ""; out.value = ""; decBtn.disabled = true;
+      if (!file) return alert("請先選擇圖片");
+      if (!key)  return alert("請輸入密鑰");
+
+      // 1. 讀 DataURL
+      const dataURL = await new Promise(r=>{
+        const fr = new FileReader();
+        fr.onload = ()=>r(fr.result);
+        fr.readAsDataURL(file);
+      });
+      // 2. 包 JSON
+      const [hdr, b64] = dataURL.split(",",2);
+      const mime = hdr.match(/data:(.+);base64/)[1];
+      const json = JSON.stringify({ type: mime, data: b64 });
+
+      // 3. AES 加密成 Base64
+      const aesStr = CryptoJS.AES.encrypt(json, key).toString();
+
+      // 4. 切 512 字元一段
+      const SEG = 512;
+      const segments = [];
+      for (let i = 0; i < aesStr.length; i += SEG) {
+        segments.push(aesStr.slice(i, i + SEG));
+      }
+      const total = segments.length;
+
+      // 5. 衍生 Emoji 字典
+      const seed = CryptoJS.MD5(key).words[0];
+      const [BASE_EMOJIS, SEP_EMOJIS] = generateEmojis(seed);
+
+      // 6. 準備 Web Worker 腳本（Blob）
+      const workerScript = `
+        self.onmessage = function(e) {
+          const { segments, base, sep, id, step } = e.data;
+          for(let idx = id; idx < segments.length; idx += step) {
+            const txt = segments[idx];
+            let emj = "";
+            for(let i=0; i<txt.length; i++){
+              const cp = txt.codePointAt(i);
+              emj += (${intToEmoji.toString()})(cp, base);
+              if(i < txt.length-1){
+                emj += sep[Math.floor(Math.random()*sep.length)];
+              }
+              if(cp > 0xFFFF) i++;
+            }
+            self.postMessage({ idx, emj });
+          }
+          // Worker 全部它的段都送完
+          self.postMessage({ done: id });
+        };
+      `;
+      const blob    = new Blob([workerScript], { type: "application/javascript" });
+      const url     = URL.createObjectURL(blob);
+      const workers = [];
+      const results = new Array(total);
+      let completed = 0;
+
+      info.textContent = `共 ${total} 段，加密中：0/${total}`;
+      btn.disabled = true;
+
+      // 7. 啟動 8 個 Worker
+      for (let t = 0; t < 8; t++) {
+        const w = new Worker(url);
+        workers.push(w);
+        w.onmessage = function(e) {
+          if (e.data.idx !== undefined) {
+            results[e.data.idx] = e.data.emj;
+            completed++;
+            info.textContent = `共 ${total} 段，加密中：${completed}/${total}`;
+            if (completed === total) {
+              // 全部結束 → 拼接、展示
+              const finalEmj = results.join("");
+              out.value = finalEmj;
+              info.textContent = `完成：共 ${total} 段`;
+              decBtn.disabled = false;
+              btn.disabled = false;
+              // 終止所有 workers
+              workers.forEach(wk => wk.terminate());
+            }
+          }
+        };
+        // 傳入參數給 Worker
+        w.postMessage({
+          segments,
+          base: BASE_EMOJIS,
+          sep: SEP_EMOJIS,
+          id: t,
+          step: 8
+        });
+      }
+    }
+
+    // ─── 解密流程 ───
+    function decryptImage() {
+      const emj = document.getElementById("emojiInput").value.trim();
+      const key = document.getElementById("secretKey").value.trim();
+      if (!emj) return alert("請貼上加密後的 Emoji");
+      if (!key) return alert("請輸入相同密鑰");
+
+      // 1. 重建字典
+      const seed = CryptoJS.MD5(key).words[0];
+      const [B, S] = generateEmojis(seed);
+
+      // 2. Emoji → Base64
+      let tmp = "", b64 = "";
+      for (let ch of [...emj]) {
+        if (S.includes(ch)) {
+          // 反向解碼該段
+          let v = 0, j = 0;
+          while (j < tmp.length) {
+            const c = [...tmp.slice(j)][0];
+            v = v * B.length + B.indexOf(c);
+            j += c.length;
+          }
+          b64 += String.fromCharCode(v);
+          tmp = "";
+        } else tmp += ch;
+      }
+      // 處理最後一段
+      if (tmp) {
+        let v = 0, j = 0;
+        while (j < tmp.length) {
+          const c = [...tmp.slice(j)][0];
+          v = v * B.length + B.indexOf(c);
+          j += c.length;
+        }
+        b64 += String.fromCharCode(v);
+      }
+
+      // 3. AES 解密
+      const json = CryptoJS.AES.decrypt(b64, key)
+                     .toString(CryptoJS.enc.Utf8);
+      if (!json) return alert("解密失敗，請確認密鑰正確");
+
+      // 4. 重建圖片
+      const obj = JSON.parse(json);
+      document.getElementById("resultImage").src =
+        `data:${obj.type};base64,${obj.data}`;
+    }
+  </script>
+</body>
+</html>
+
