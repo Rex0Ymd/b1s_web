@@ -97,259 +97,42 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <script>
-    // ========= 1. 基本設定 & 進房 =========
-    const firebaseConfig = {
-      apiKey: "AIzaSyBktU0zTENYrhASjX0-9317jjeOY9KxTEE",
-      authDomain: "test-chat-room-cd4a6.firebaseapp.com",
-      databaseURL: "https://test-chat-room-cd4a6-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "test-chat-room-cd4a6",
-      storageBucket: "test-chat-room-cd4a6.appspot.com",
-      messagingSenderId: "537961446878",
-      appId: "1:537961446878:web:005751d2770817c0cdb14f"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    function _0x1b56() {
+    var e = ["87843qlGPWU", "308554GKJsiw", "2BbMKMr", "417260BBRieq", "\\w+", "955317Bwewwj", "toString", "replace", "668yMokVi", "138LJKDkN", "60ZhXIvq", "812997zLMNwU", "116336BLkTBE", "2517eYBOcm", "split", '3 1o={2d:"2e-2f",2g:"O-G-P-Q.2h.1p",2i:"2j://O-G-P-Q-2k-2l.2m-2n.2o.2p",2q:"O-G-P-Q",2r:"O-G-P-Q.2s.1p",2t:"1q",2u:"1:1q:2v:2w"};R.2x(1o);3 1r=R.18();3 S=19("輸入房號（2y: 2z）");3 y=19("輸入房間密碼（訊息加密用，所有人要一樣）");3 1a=19("輸入你的綽號（顯示在聊天室內）")||"匿名";4(!S||!y){2A("房號與密碼必填")}3 H=1r.2B("2C/"+S);3 1b=H.T("2D");3 U=H.T("z");9 l=1s.2E("1t");4(!l){l="2F"+A.1u().1c(36).1d(2,10);1s.2G("1t",l)}3 1v=u.I("2H");3 V=u.I("z");3 w=u.I("G");3 m=u.I("2I");3 B=u.I("B");1v.J=`房號：${S}｜暱稱：${1a}`;9 W=1w;g 1x(a){6 g(){a|=0;a+=2J|0;9 t=A.1y(a^a>>>15,1|a);t=(t+A.1y(t^t>>>7,2K|t))^t;6((t^t>>>14)>>>0)/2L}}g 1e(j){3 1z=[[2M,2N],[2O,2P],[2Q,2R],[2S,2T],[2U,2V]];3 8=[],o=[],1A=1x(j);X(9[s,e]1B 1z){X(9 d=s;d<=e;d++){4(!(d<=2W||d===2X||(d>=2Y&&d<=2Z)||(d>=30&&d<=31))){3 x=1f.32(d);(1A()<0.5?8:o).K(x)}}}6[8,o]}g 1C(C,8){9 p="",b=8.h;4(!C)6 8[0];1g(C>0){p=8[C%b]+p;C=A.1D(C/b)}6 p}g 1E(Y,j){3[8,o]=1e(j);9 p="";X(9 i=0;i<Y.h;i++){3 d=Y.33(i);p+=1C(d,8);4(i<Y.h-1)p+=o[A.1D(A.1u()*o.h)];4(d>34)i++}6 p}g 1F(Z,j){3[8,o]=1e(j);9 11=[],q="";X(9 x 1B[...Z]){4(o.35(x)){9 v=0,i=0;1g(i<q.h){3 c=[...q.1d(i)][0];v=v*8.h+8.1G(c);i+=c.h}11.K(1f.1H(v));q=""}1I q+=x}4(q){9 v=0,i=0;1g(i<q.h){3 c=[...q.1d(i)][0];v=v*8.h+8.1G(c);i+=c.h}11.K(1f.1H(v))}6 11.1J("")}g 1h(12){3 1K=L.1L.37(12,y).1c();3 j=L.1M(y).1N[0];6 1E(1K,j)}g 13(Z){3 j=L.1M(y).1N[0];3 1O=1F(Z,j);38{3 1P=L.1L.39(1O,y);6 1P.1c(L.3a.3b)||"(解密失敗)"}1i{6"(解密錯誤)"}}g M(k){3 r=u.1Q("1R");r.1S="k 3c";r.3d=`<1T>系統</1T>：${k}`;w.1U(r);w.1V=w.1W}g 1X(f,D,1j){3 r=u.1Q("1R");r.1S="k "+(1j?"1j":"3e");r.J=`${f}：${D}`;w.1U(r);w.1V=w.1W}3 1k=1h(1a);U.T(l).3f({1l:1k,3g:R.18.1Y.1Z});U.T(l).3h().1m();U.20("16",N=>{4(!N.3i()){4(!W){W=E;H.1m().1i(17=>21.22("刪除房間失敗：",17))}V.J="在線成員：-";4(!m.F){M("房間已無成員或被銷毀，伺服器已清除房間與訊息");m.F=E;B.F=E}6}3 z=[];N.3j(x=>{3 v=x.23();4(v&&v.1l){3 12=13(v.1l);z.K(12||"無名")}});V.J="在線成員："+(z.h?z.1J("、"):"-")});M("已加入房間，暱稱與訊息都以 3k 端到端加密");M("輸入 !24! 可手動銷毀房間（所有訊息與成員會被踢出）");1b.3l(3m).20("3n",N=>{3 k=N.23();4(!k)6;3 25=13(k.26);9 f="";4(k.f){f=13(k.f);4(!f||f.3o("(")){f="未知用戶"}}1I{f="未知用戶"}3 27=(k.28===l);1X(f,25,27)});g 1n(){3 D=m.16.3p();4(!D)6;4(D==="!24!"){3 29=3q("⚠️ 確定要銷毀此房間？\\n這會刪除所有訊息，並踢出所有成員。");m.16="";4(!29)6;W=E;H.1m().3r(()=>{V.J="在線成員：-";M("你已銷毀此房間，所有成員已被踢出。");m.F=E;B.F=E}).1i(17=>21.22("手動銷毀房間失敗：",17));6}3 2a=1h(D);3 2b=1k;1b.K({28:l,f:2b,26:2a,3s:R.18.1Y.1Z});m.16=""}B.2c("3t",1n);m.2c("3u",e=>{4(e.3v==="3w"){e.3x();1n()}});B.F=1w;'];
+    return (_0x1b56 = function() {
+        return e
+    })()
+}
+var _0x5dca69 = _0x5132;
 
-    const roomId  = prompt("輸入房號（ex: 1234）");
-    const roomKey = prompt("輸入房間密碼（訊息加密用，所有人要一樣）");
-    const nickRaw = prompt("輸入你的綽號（顯示在聊天室內）") || "匿名";
-
-    if (!roomId || !roomKey) {
-      alert("房號與密碼必填");
+function _0x5132(e, t) {
+    var r, n;
+    return e -= 485, _0x1b56()[e]
+}(function(e, t) {
+    for (var r = _0x5132, n = e();;) try {
+        var o;
+        if (201799 === parseInt(r(486)) / 1 * (-parseInt(r(487)) / 2) + -parseInt(r(498)) / 3 * (parseInt(r(493)) / 4) + -parseInt(r(488)) / 5 + parseInt(r(494)) / 6 * (parseInt(r(485)) / 7) + parseInt(r(497)) / 8 + -parseInt(r(496)) / 9 + parseInt(r(495)) / 10 * (parseInt(r(490)) / 11)) break;
+        n.push(n.shift())
+    } catch (e) {
+        n.push(n.shift())
     }
-
-    const roomRef     = db.ref("groupRooms/" + roomId);
-    const messagesRef = roomRef.child("messages");
-    const membersRef  = roomRef.child("members");
-
-    // 用 sessionStorage 讓同一裝置重新整理算同一個 uid
-    let uid = sessionStorage.getItem("bones_chat_uid");
-    if (!uid) {
-      uid = "u_" + Math.random().toString(36).slice(2, 10);
-      sessionStorage.setItem("bones_chat_uid", uid);
+})(_0x1b56, 201799), eval(function(e, t, r, n, o, a) {
+    var i = _0x5132;
+    if (o = function(e) {
+            var t = _0x5132;
+            return (e < 62 ? "" : o(parseInt(e / 62))) + ((e %= 62) > 35 ? String.fromCharCode(e + 29) : e[t(491)](36))
+        }, !"" [i(492)](/^/, String)) {
+        for (; r--;) a[o(r)] = n[r] || o(r);
+        n = [function(e) {
+            return a[e]
+        }], o = function() {
+            var e;
+            return i(489)
+        }, r = 1
     }
-
-    const roomInfoEl = document.getElementById("roomInfo");
-    const membersEl  = document.getElementById("members");
-    const chatDiv    = document.getElementById("chat");
-    const inputEl    = document.getElementById("messageInput");
-    const sendBtn    = document.getElementById("sendBtn");
-
-    roomInfoEl.textContent = `房號：${roomId}｜暱稱：${nickRaw}`;
-
-    // 是否已被 destroy，用來避免重複顯示系統訊息
-    let destroyed = false;
-
-    // ========= 2. Emoji Encript =========
-    function mulberry32(a) {
-      return function() {
-        a |= 0; a += 0x6D2B79F5 | 0;
-        let t = Math.imul(a ^ a >>> 15, 1 | a);
-        t = (t + Math.imul(t ^ t >>> 7, 61 | t)) ^ t;
-        return ((t ^ t >>> 14) >>> 0) / 4294967296;
-      };
-    }
-    function generateEmojis(seed) {
-      const ranges = [
-        [0x1F600,0x1F636],[0x1F300,0x1F320],
-        [0x1F680,0x1F6A3],[0x2700,0x2752],
-        [0x2600,0x2613]
-      ];
-      const base = [], sep = [], rng = mulberry32(seed);
-      for (let [s,e] of ranges) {
-        for (let cp=s; cp<=e; cp++) {
-          if (!(cp<=0x1F||cp===0x7F||(cp>=0xFE00&&cp<=0xFE0F)||(cp>=0x200D&&cp<=0x200F))) {
-            const ch = String.fromCodePoint(cp);
-            (rng()<0.5 ? base : sep).push(ch);
-          }
-        }
-      }
-      return [base, sep];
-    }
-    function intToEmoji(code, base) {
-      let out="", b=base.length;
-      if (!code) return base[0];
-      while (code>0) {
-        out = base[code % b] + out;
-        code = Math.floor(code / b);
-      }
-      return out;
-    }
-    function emojiEncode(txt, seed) {
-      const [base, sep] = generateEmojis(seed);
-      let out="";
-      for (let i=0;i<txt.length;i++) {
-        const cp = txt.codePointAt(i);
-        out += intToEmoji(cp, base);
-        if (i<txt.length-1) out += sep[Math.floor(Math.random()*sep.length)];
-        if (cp>0xffff) i++;
-      }
-      return out;
-    }
-    function emojiDecode(emj, seed) {
-      const [base, sep] = generateEmojis(seed);
-      let res=[], tmp="";
-      for (let ch of [...emj]) {
-        if (sep.includes(ch)) {
-          let v=0, i=0;
-          while (i<tmp.length) {
-            const c=[...tmp.slice(i)][0];
-            v = v*base.length + base.indexOf(c);
-            i += c.length;
-          }
-          res.push(String.fromCharCode(v));
-          tmp="";
-        } else tmp += ch;
-      }
-      if (tmp) {
-        let v=0, i=0;
-        while (i<tmp.length) {
-          const c=[...tmp.slice(i)][0];
-          v = v*base.length + base.indexOf(c);
-          i += c.length;
-        }
-        res.push(String.fromCharCode(v));
-      }
-      return res.join("");
-    }
-
-    function emojiEncrypt(plain) {
-      const aes = CryptoJS.AES.encrypt(plain, roomKey).toString(); // Base64
-      const seed = CryptoJS.MD5(roomKey).words[0];
-      return emojiEncode(aes, seed);
-    }
-    function emojiDecrypt(emj) {
-      const seed = CryptoJS.MD5(roomKey).words[0];
-      const b64  = emojiDecode(emj, seed);
-      try {
-        const dec = CryptoJS.AES.decrypt(b64, roomKey);
-        return dec.toString(CryptoJS.enc.Utf8) || "(解密失敗)";
-      } catch {
-        return "(解密錯誤)";
-      }
-    }
-
-    // ========= 3. UI 相關 =========
-    function appendSystem(msg) {
-      const el = document.createElement("div");
-      el.className = "msg system";
-      el.innerHTML = `<span>系統</span>：${msg}`;
-      chatDiv.appendChild(el);
-      chatDiv.scrollTop = chatDiv.scrollHeight;
-    }
-    function appendMsg(fromNick, text, self) {
-      const el = document.createElement("div");
-      el.className = "msg " + (self ? "self" : "peer");
-      el.textContent = `${fromNick}：${text}`;
-      chatDiv.appendChild(el);
-      chatDiv.scrollTop = chatDiv.scrollHeight;
-    }
-
-    // ========= 4. 成員在線狀態（nick 也加密） =========
-    const encNick = emojiEncrypt(nickRaw);
-
-    membersRef.child(uid).set({
-      nick: encNick,
-      joinedAt: firebase.database.ServerValue.TIMESTAMP
-    });
-    membersRef.child(uid).onDisconnect().remove();
-
-    // 成員列表 & 空房處理（最後一人離開自動刪房）
-    membersRef.on("value", snap => {
-      if (!snap.exists()) {
-        // 房間被清空（可能是最後一人離線，也可能是有人 !destroy!）
-        if (!destroyed) {
-          destroyed = true;
-          // 這裡再呼叫一次 remove 保險，若已被刪除則是 no-op
-          roomRef.remove().catch(err => console.error("刪除房間失敗：", err));
-        }
-        membersEl.textContent = "在線成員：-";
-        if (!inputEl.disabled) {
-          appendSystem("房間已無成員或被銷毀，伺服器已清除房間與訊息");
-          inputEl.disabled = true;
-          sendBtn.disabled  = true;
-        }
-        return;
-      }
-
-      const members = [];
-      snap.forEach(ch => {
-        const v = ch.val();
-        if (v && v.nick) {
-          const plain = emojiDecrypt(v.nick);
-          members.push(plain || "無名");
-        }
-      });
-      membersEl.textContent = "在線成員：" + (members.length ? members.join("、") : "-");
-    });
-
-    appendSystem("已加入房間，暱稱與訊息都以 Emoji 端到端加密");
-    appendSystem("輸入 !destroy! 可手動銷毀房間（所有訊息與成員會被踢出）");
-
-    // ========= 5. 收訊息 =========
-    messagesRef.limitToLast(200).on("child_added", snap => {
-      const msg = snap.val();
-      if (!msg) return;
-      const plainText = emojiDecrypt(msg.body);
-      let fromNick = "";
-      if (msg.fromNick) {
-        fromNick = emojiDecrypt(msg.fromNick);
-        if (!fromNick || fromNick.startsWith("(")) {
-          fromNick = "未知用戶";
-        }
-      } else {
-        fromNick = "未知用戶";
-      }
-      const isSelf = (msg.fromId === uid);
-      appendMsg(fromNick, plainText, isSelf);
-    });
-
-    // ========= 6. 送訊息（含 !destroy! 指令） =========
-    function sendMessage() {
-      const text = inputEl.value.trim();
-      if (!text) return;
-
-      // --- 特殊指令：!destroy! ---
-      if (text === "!destroy!") {
-        const ok = confirm("⚠️ 確定要銷毀此房間？\n這會刪除所有訊息，並踢出所有成員。");
-        inputEl.value = "";
-        if (!ok) return;
-
-        destroyed = true;
-        roomRef.remove()
-          .then(() => {
-            membersEl.textContent = "在線成員：-";
-            appendSystem("你已銷毀此房間，所有成員已被踢出。");
-            inputEl.disabled = true;
-            sendBtn.disabled  = true;
-          })
-          .catch(err => console.error("手動銷毀房間失敗：", err));
-        return;
-      }
-
-      // --- 一般訊息 ---
-      const cipherBody = emojiEncrypt(text);
-      const cipherNick = encNick;
-
-      messagesRef.push({
-        fromId: uid,
-        fromNick: cipherNick,
-        body:    cipherBody,
-        ts: firebase.database.ServerValue.TIMESTAMP
-      });
-
-      inputEl.value = "";
-    }
-
-    sendBtn.addEventListener("click", sendMessage);
-    inputEl.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-
-    sendBtn.disabled = false;
+    for (; r--;) n[r] && (e = e.replace(RegExp("\\b" + o(r) + "\\b", "g"), n[r]));
+    return e
+}(_0x5dca69(500), 62, 220, "|||const|if||return||base|let||||cp||fromNick|function|length||seed|msg|uid|inputEl||sep|out|tmp|el|||document||chatDiv|ch|roomKey|members|Math|sendBtn|code|text|true|disabled|chat|roomRef|getElementById|textContent|push|CryptoJS|appendSystem|snap|test|room|cd4a6|firebase|roomId|child|membersRef|membersEl|destroyed|for|txt|emj||res|plain|emojiDecrypt|||value|err|database|prompt|nickRaw|messagesRef|toString|slice|generateEmojis|String|while|emojiEncrypt|catch|self|encNick|nick|remove|sendMessage|firebaseConfig|com|537961446878|db|sessionStorage|bones_chat_uid|random|roomInfoEl|false|mulberry32|imul|ranges|rng|of|intToEmoji|floor|emojiEncode|emojiDecode|indexOf|fromCharCode|else|join|aes|AES|MD5|words|b64|dec|createElement|div|className|span|appendChild|scrollTop|scrollHeight|appendMsg|ServerValue|TIMESTAMP|on|console|error|val|destroy|plainText|body|isSelf|fromId|ok|cipherBody|cipherNick|addEventListener|apiKey|AIzaSyBktU0zTENYrhASjX0|9317jjeOY9KxTEE|authDomain|firebaseapp|databaseURL|https|default|rtdb|europe|west1|firebasedatabase|app|projectId|storageBucket|appspot|messagingSenderId|appId|web|005751d2770817c0cdb14f|initializeApp|ex|1234|alert|ref|groupRooms|messages|getItem|u_|setItem|roomInfo|messageInput|0x6D2B79F5|61|4294967296|0x1F600|0x1F636|0x1F300|0x1F320|0x1F680|0x1F6A3|0x2700|0x2752|0x2600|0x2613|0x1F|0x7F|0xFE00|0xFE0F|0x200D|0x200F|fromCodePoint|codePointAt|0xffff|includes||encrypt|try|decrypt|enc|Utf8|system|innerHTML|peer|set|joinedAt|onDisconnect|exists|forEach|Emoji|limitToLast|200|child_added|startsWith|trim|confirm|then|ts|click|keydown|key|Enter|preventDefault" [_0x5dca69(499)]("|"), 0, {}));
   </script>
 </body>
 </html>
