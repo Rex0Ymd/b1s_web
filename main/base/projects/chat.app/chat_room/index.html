@@ -140,7 +140,7 @@
     // 是否已被 destroy，用來避免重複顯示系統訊息
     let destroyed = false;
 
-    // ========= 2. Emoji + AES 工具 =========
+    // ========= 2. Emoji Encript =========
     function mulberry32(a) {
       return function() {
         a |= 0; a += 0x6D2B79F5 | 0;
@@ -283,7 +283,7 @@
       membersEl.textContent = "在線成員：" + (members.length ? members.join("、") : "-");
     });
 
-    appendSystem("已加入房間，暱稱與訊息都以 AES+Emoji 端到端加密");
+    appendSystem("已加入房間，暱稱與訊息都以 Emoji 端到端加密");
     appendSystem("輸入 !destroy! 可手動銷毀房間（所有訊息與成員會被踢出）");
 
     // ========= 5. 收訊息 =========
