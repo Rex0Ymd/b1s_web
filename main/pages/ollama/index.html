@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - Ollama</title>
+    <link rel="icon" href="data:,">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .scrollbar::-webkit-scrollbar { width: 8px; }
+        .scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        .scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
+        .chat-row { white-space: pre-wrap; word-break: break-word; }
+        .bot-message code {
+            background: #f3f4f6;
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.25rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+        .bot-message pre {
+            background: #111827;
+            color: #f9fafb;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+        }
+        .bot-message pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        .typing::after {
+            content: '...';
+            animation: blink 1s steps(3, end) infinite;
+        }
+        @keyframes blink {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+
+    <div class="w-full max-w-3xl bg-white rounded-xl shadow-lg flex flex-col h-[85vh]">
+        <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center rounded-t-xl">
+            <h1 class="text-xl font-bold text-gray-800">🤖 Ollama AI 助手</h1>
+            <div class="text-xs text-gray-500">
+                服務端：<span id="api-status">檢查中...</span>
+            </div>
+        </div>
+
+        <div id="chat-history" class="chat-box flex-1 p-4 overflow-y-auto scrollbar space-y-4 flex flex-col"></div>
+
+        <div class="p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+            <textarea id="user-input" rows="3"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 resize-none"
+                placeholder="請輸入您的問題..."></textarea>
+
+            <div class="flex justify-between items-center gap-3 flex-wrap">
+                <div class="hidden md:flex items-center space-x-2 text-xs text-gray-400">
+                    <label>Model: <input type="text" id="model-name" value="qwen3.5:9b" class="border p-1 rounded w-24 text-black"></label>
+                    <label>Sys: <input type="text" id="system-prompt" value="你是一個友善的 AI 助手" class="border p-1 rounded w-48 text-black"></label>
+                </div>
+                <button id="send-button" onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    發送
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://ai.bones-sec.xyz/api/chat';
+        const TAGS_URL = 'https://ai.bones-sec.xyz/api/tags';
+        let isGenerating = false;
+
+        const chatBox = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const apiStatus = document.getElementById('api-status');
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function renderSimpleMarkdown(text) {
+            let html = escapeHtml(text || '');
+
+            html = html.replace(/```([\s\S]*?)```/g, (_, code) => {
+                return `<pre><code>${escapeHtml(code.trim())}</code></pre>`;
+            });
+
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            html = html.replace(/\n/g, '<br>');
+
+            return html;
+        }
+
+        function setGeneratingState(state) {
+            isGenerating = state;
+            userInput.disabled = state;
+            sendButton.disabled = state;
+        }
+
+        function appendMessage(role, text, isTemp = false) {
+            const div = document.createElement('div');
+
+            let className = 'max-w-full p-3 rounded-lg text-sm leading-relaxed chat-row ';
+            if (role === 'user') className += 'bg-blue-100 text-gray-800 self-end mr-2';
+            else if (role === 'bot') className += 'bg-white border border-gray-100 shadow-sm text-gray-800 bot-message';
+            else if (role === 'error') className += 'bg-red-50 text-red-600 border border-red-100 text-center';
+            else if (role === 'system') className += 'text-center text-xs text-gray-400 italic';
+
+            div.className = className;
+            const id = 'msg-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+            div.id = id;
+
+            if (role === 'bot') {
+                div.innerHTML = renderSimpleMarkdown(text || '');
+            } else if (role === 'error') {
+                div.innerHTML = text || '';
+            } else {
+                div.textContent = text || '';
+            }
+
+            if (isTemp) {
+                div.dataset.temp = '1';
+                div.classList.add('typing');
+            }
+
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return id;
+        }
+
+        async function checkApiStatus() {
+            try {
+                const response = await fetch(TAGS_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                apiStatus.textContent = '正常';
+                apiStatus.className = 'text-green-600';
+            } catch (error) {
+                apiStatus.textContent = '連不到';
+                apiStatus.className = 'text-red-600';
+                console.error('API 狀態檢查失敗:', error);
+            }
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message || isGenerating) return;
+
+            const model = document.getElementById('model-name').value.trim() || 'qwen3.5:9b';
+            const sysPrompt = document.getElementById('system-prompt').value.trim();
+
+            appendMessage('user', message);
+            userInput.value = '';
+            setGeneratingState(true);
+
+            const payload = {
+                model,
+                messages: [
+                    { role: 'system', content: sysPrompt || '你是一個友善的 AI 助手' },
+                    { role: 'user', content: message }
+                ],
+                stream: false
+            };
+
+            const loadingId = appendMessage('bot', '正在思考', true);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API 狀態: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const content = data?.message?.content || '沒有回應內容';
+                const el = document.getElementById(loadingId);
+                if (el) {
+                    el.classList.remove('typing');
+                    el.removeAttribute('data-temp');
+                    el.innerHTML = renderSimpleMarkdown(content);
+                }
+            } catch (error) {
+                const el = document.getElementById(loadingId);
+                if (el) el.remove();
+                appendMessage('error', `錯誤：${escapeHtml(error.message)}<br>請確認 Ollama 正在執行，並用 <b>http://127.0.0.1:8000</b> 或 <b>http://localhost:8000</b> 開頁面。`);
+                console.error(error);
+            } finally {
+                setGeneratingState(false);
+                userInput.focus();
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        window.addEventListener('load', async () => {
+            appendMessage('system', 'AI 助手已就緒，請輸入訊息。');
+            await checkApiStatus();
+            userInput.focus();
+        });
+    </script>
+</body>
+</html>
