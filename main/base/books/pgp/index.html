@@ -1,51 +1,74 @@
 <!DOCTYPE html>
-<link rel="icon" href="../../../images/b1s.png" type="image/png">
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PGP 加密技術</title>
-  <link rel="stylesheet" href="../../../CSS/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PGP 文字加密安全性、匿名性與可偵測性分析 - Bones Security Technology</title>
+  <link rel="icon" href="../../../images/b1s.png" type="image/png">
+  <link rel="stylesheet" href="../../../CSS/style.css">
 </head>
 <body>
   <header>
     <h1>BONES SECURITY TECHNOLOGY</h1>
     <nav>
-      <a href="../../../pages/mainpage">首頁</a>
-      <a href="../../../pages/services">文章列表</a>
+      <a href="../../../pages/mainpage/">首頁</a>
+      <a href="../../../pages/about/">關於</a>
+      <a href="../../../pages/projects/">作品</a>
+      <a href="../../../pages/services/">服務</a>
+      <a href="../../../pages/contact/">聯絡</a>
     </nav>
   </header>
 
-  <section class="hero2">
-    <h2>PGP 加密技術安全性與匿名性分析</h2>
-  </section>
+  <main class="container">
+    <section class="hero2">
+      <h2>PGP 公私鑰密碼系統安全性分析</h2>
+      <p>端對端非對稱加密、數位簽章防篡改與流量識別風險剖析</p>
+    </section>
 
-  <section class="description">
-    <h2>PGP 加密技術安全性、匿名性與可被偵測性分析</h2>
-    <ul>
-      <li><strong>端對端加密</strong>：使用公開金鑰加密，僅擁有對應私鑰者能解密，內容在傳輸過程中不可讀。</li>
-      <li><strong>身份驗證</strong>：透過數位簽章機制，接收方能驗證發件人身份，防止中間人攻擊。</li>
-      <li><strong>開放標準</strong>：遵循 OpenPGP 標準（RFC 4880），廣泛實作於各種應用程式中，並經受多年考驗。</li>
-      <li><strong>匿名性依賴使用方式</strong>：若金鑰對應到真實身份或公開郵箱，則匿名性降低；若匿名註冊使用，匿名性極高。</li>
-      <li><strong>潛在弱點</strong>：若私鑰管理不善（如私鑰洩漏或弱密碼保護），加密無法保障。</li>
-      <li><strong>可被偵測性</strong>：加密封包格式容易被識別為 PGP，雖然內容加密，但能辨識為「有人在用加密技術」。</li>
-    </ul>
+    <article class="description">
+      <h2>PGP (Pretty Good Privacy) 技術剖析</h2>
+      <p>
+        PGP 是一種享譽盛名且歷史悠久的加密標準，用於電子郵件、文本和檔案的端對端安全傳輸。它結合了對稱密鑰加密和非對稱（公鑰）密鑰加密的優勢，在協議層保障了數據的機密性、完整性與身分可驗證性。
+      </p>
 
-    <h3>總結：</h3>
-    <ul>
-      <li>匿名性：高（若搭配匿名信箱及匿名產生金鑰）</li>
-      <li>安全性：極高（只要私鑰保護得當）</li>
-      <li>可被偵測性：中（流量可被識別，但內容無法解密）</li>
-      <li>適用場景：機密通訊、重要文件加密、匿名聯絡</li>
-      <li>建議：搭配 Tor/VPN 環境匿名產生金鑰，避免將公鑰與真實身份綁定</li>
-    </ul>
+      <h3>核心安全優勢與運作機制：</h3>
+      <ul>
+        <li><strong>端對端非對稱加密</strong>：發送方使用接收方的「公鑰」（Public Key）對文本進行加密。密文在傳輸途中是無法破解的。只有接收方使用其專屬的「私鑰」（Private Key）在本地端進行解密，保證通訊鏈路絕對安全。</li>
+        <li><strong>數位簽章 (Digital Signatures)</strong>：發送方可使用自己的私鑰為加密文本附加數位簽章，接收方使用發送方的公鑰進行驗證。這不僅能確認發件者的真實身分，還能 100% 判定內容是否在傳輸中被中間人篡改。</li>
+        <li><strong>無中心化依賴（網絡信任鏈）</strong>：PGP 不依賴任何中心化的證書發行機構（CA）。用戶可直接生成金鑰，並通過網絡信任鏈（Web of Trust）進行去中心化的公鑰簽章和認證，杜絕了中心化單點崩潰風險。</li>
+      </ul>
 
-    <nav><a href="https://www.openpgp.org/">--> OpenPGP 官方網站 <--</a></nav>
-  </section>
+      <h3>可偵測性風險（Traffic Detection Risks）：</h3>
+      <p>
+        PGP 雖然具備極致的內容安全性，但其本身在匿名性和可偵測性上面存在以下弱點：
+      </p>
+      <ul>
+        <li><strong>公鑰與真實身分綁定</strong>：如果用戶將生成的 PGP 公鑰發佈到公共金鑰伺服器（Keyservers）上，並關聯了真實郵箱或社交賬號，那麼其通訊身份的匿名性將不復存在。</li>
+        <li><strong>高特徵性的數據流（Metadata Identification）</strong>：PGP 加密的文本格式具有非常明顯的特徵（例如以 <code>-----BEGIN PGP MESSAGE-----</code> 開頭）。雖然網路監控系統無法解密內容，但他們能輕易判定「有人正在使用 PGP 加密進行通信」，進而將該賬號或 IP 列為重點監控對象。</li>
+      </ul>
+
+      <h3>綜合安全總結：</h3>
+      <ul>
+        <li><strong>匿名性等級</strong>：中（取決於您是否使用匿名信箱，以及公鑰與私鑰生成時的環境隔離度）</li>
+        <li><strong>安全性等級</strong>：極高（只要您妥善保存私鑰，並為私鑰設置高強度的解密密碼，目前的超級電腦與量子計算在有限時間內均無法破解）</li>
+        <li><strong>可被偵測性</strong>：高（加密報文特徵顯著，易被防火牆（如 GFW）或深層數據包檢測（DPI）系統攔截或標記）</li>
+      </ul>
+
+      <p style="text-align: center; margin-top: 1.5rem; margin-bottom: 1rem;">
+        <a href="https://www.openpgp.org/" target="_blank" rel="noopener noreferrer" class="cta-button">前往 OpenPGP 官方網站</a>
+      </p>
+    </article>
+
+    <div style="text-align: center; margin-top: 2rem; margin-bottom: 3rem;">
+      <a href="../../../pages/services/" class="cta-button">返回安全指南列表</a>
+    </div>
+  </main>
 
   <footer>
-    <p>&copy; 2025 Bones Security Technology. All rights reserved.</p>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
   </footer>
 </body>
 </html>
-

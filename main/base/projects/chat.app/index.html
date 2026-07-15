@@ -1,40 +1,58 @@
 <!DOCTYPE html>
-<link rel="icon" sizes="180x180" href="../../../images/b1s.png" type="image/png">
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>加密聊天</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>加密聊天室 - Bones Security Technology</title>
+  <link rel="icon" href="../../../images/b1s.png" type="image/png">
   <link rel="stylesheet" href="../../../CSS/style.css">
 </head>
 <body>
   <header>
     <h1>BONES SECURITY TECHNOLOGY</h1>
     <nav>
-      <a href="../../../pages/mainpage">首頁</a>
-      <a href="../../../pages/projects">作品</a>
+      <a href="../../../pages/mainpage/">首頁</a>
+      <a href="../../../pages/about/">關於</a>
+      <a href="../../../pages/projects/">作品</a>
+      <a href="../../../pages/services/">服務</a>
+      <a href="../../../pages/contact/">聯絡</a>
     </nav>
   </header>
-  
-  <section class="hero2">
-    <h2>加密聊天</h2>
-    <p>我們打造保護你隱私的科技武器</p>
-  </section>
-  
-  <div class="container">
-    <h2>開始聊天/?</h2>
-    <section class="description">
-      <p>用戶的所有資料皆透過我們設計的獨特加密方式保障所有人的隱私安全</p>
-      <p>＊依系統指示操作加入房間＊</p>
-      <p>創房者須等待對畫框中出現系統提示"房間已連線"後對方才可加入</p>
-      <p>當頁面關閉後系統立即將使用者資料從中繼伺服器中刪除</p>
-      <nav><a href="chat_room" target="_blank">--> 點擊進入房間 <--</a></nav>
+
+  <main class="container">
+    <section class="hero2">
+      <h2>端對端加密匿名聊天室</h2>
+      <p>極致隱私保護，不留痕跡的溝通機制</p>
     </section>
-  </div>
-  
+
+    <section class="description">
+      <h2>安全使用指引</h2>
+      <p>
+        本聊天室採用創新的客戶端端對端加密（E2EE）技術。您的聊天暱稱和訊息內容在發送前都會在瀏覽器本地進行高強度加密，伺服器與中繼節點僅傳輸加密報文，無法解讀任何明文內容。
+      </p>
+
+      <div style="background-color: #0c081a; padding: 1.25rem; border-left: 4px solid var(--color-pink-neon); margin: 1.5rem 0; border-radius: 0 4px 4px 0;">
+        <p style="margin-top: 0; font-weight: bold; color: var(--color-pink-neon);">＊ 依系統指示操作加入房間 ＊</p>
+        <p>1. <strong>約定房號與密碼</strong>：請與聊天對象提前約定好房號（如 1234）以及通訊密鑰（密碼）。該密碼僅用於客戶端訊息加解密，永不傳送至網絡。</p>
+        <p>2. <strong>連線狀態確認</strong>：創房者建立房間後，須等待對話框中出現系統提示「房間已連線」後，對方才可輸入相同房號與密碼加入。</p>
+        <p>3. <strong>關閉即自毀</strong>：當網頁關閉時，系統會立即將您的連線與臨時金鑰從中繼伺服器中彻底清除，實現銷毀自毀。</p>
+      </div>
+
+      <p style="text-align: center; margin-top: 2rem;">
+        <a href="chat_room/" class="cta-button" target="_blank" rel="noopener noreferrer">點擊進入匿名聊天室</a>
+      </p>
+    </section>
+
+    <div style="text-align: center; margin-top: 1.5rem;">
+      <a href="../../../pages/projects/" style="color: var(--color-purple-mid); text-decoration: none; font-size: 0.9rem;">&larr; 返回作品列表</a>
+    </div>
+  </main>
+
   <footer>
-    <p>&copy; 2025 Bones Security Technology. All rights reserved.</p>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
   </footer>
-  
 </body>
 </html>
-

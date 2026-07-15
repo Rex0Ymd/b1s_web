@@ -1,60 +1,70 @@
 <!DOCTYPE html>
-<link rel="icon" href="../../images/b1s.png" type="image/png">
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bones Security Technology</title>
+  <title>Bones Security Technology - 匿名上網、加密通訊與數位隱私</title>
+  <link rel="icon" href="../../images/b1s.png" type="image/png">
   <link rel="stylesheet" href="../../CSS/style.css">
 </head>
 <body>
   <header>
     <h1>BONES SECURITY TECHNOLOGY</h1>
     <nav>
-      <a href="../mainpage">首頁</a>
-      <a href="../about">關於</a>
-      <a href="../projects">作品</a>
-      <a href="../services">服務</a>
-      <a href="../contact">聯絡</a>
+      <a href="../mainpage/" class="active">首頁</a>
+      <a href="../about/">關於</a>
+      <a href="../projects/">作品</a>
+      <a href="../services/">服務</a>
+      <a href="../contact/">聯絡</a>
     </nav>
   </header>
 
-  <main>
+  <main class="container">
     <section class="hero">
       <h2>匿名上網．加密通訊．自由無界</h2>
       <p>我們打造保護你隱私的科技武器</p>
     </section>
-    
+
     <section class="projects">
       <h3>近期專案</h3>
       <div class="project-grid">
         <div class="project-card">
           <h4>自動IP代理</h4>
-          <p>基於暗網Tor服務  實現定時自動切換ip 無時無刻保持匿名上網</p>
+          <p>基於暗網Tor服務，實現定時自動切換 IP，無時無刻保持匿名上網，瓦解流量分析追蹤。</p>
         </div>
         <div class="project-card">
           <h4>即時加密聊天鍵盤</h4>
-          <p>捨去傳統加密通訊須不斷切換應用程式的詬病  最新表情符號加密  強到AI都解不出來</p>
+          <p>捨去傳統加密通訊須不斷切換應用程式的痛點，整合表情符號混淆加密，強到 AI 都解不出來。</p>
         </div>
         <div class="project-card">
           <h4>加密貨幣混幣器</h4>
-          <p>不再擔心被標記為黑U 使用跨練橋參與混幣 跟北韓駭客一樣牛逼</p>
+          <p>不再擔心資產被標記為高風險。使用跨鏈橋參與混幣，隱匿金流源頭，構築極致資金防線。</p>
         </div>
       </div>
     </section>
-    
+
     <section class="description">
       <h2>專案更新</h2>
-      <p>匿名聊天系統上線</p>
-      <nav><a href="../../base/projects/chat.app">--> 點擊前往作品頁面 <--</a></nav>
-      <p>即時加密聊天鍵盤已上線</p>
-      <nav><a href="../../base/projects/project.keyboard">--> 點擊前往作品頁面 <--</a></nav>
+      <p>Bones-Security AI 現已整合：</p>
+      <p style="margin-bottom: 1.5rem;">
+        <a href="../../base/projects/ollama/" class="cta-button">前往 Bones-Security AI</a>
+      </p>
+      <p>端對端匿名聊天系統正式上線：</p>
+      <p style="margin-bottom: 1.5rem;">
+        <a href="../../base/projects/chat.app/" class="cta-button">點擊前往作品頁面</a>
+      </p>
+      <p>即時加密聊天鍵盤（Android APK）已發佈：</p>
+      <p>
+        <a href="../../base/projects/project.keyboard/" class="cta-button">點擊前往作品頁面</a>
+      </p>
     </section>
-    
+
     <section class="description">
       <h2>匿名贊助</h2>
-      <p>工作室目前無收益項目，您可以選擇以xmr匿名資助我們</p>
-      <nav><a href="../../base/donate">--> 給與我們前進的動力 <--</a></nav>
+      <p>我們是完全獨立的隱私研究工作室，目前無任何商業收益。如果您認同我們的理念，歡迎使用門羅幣（XMR）資助我們持續開發：</p>
+      <p>
+        <a href="../../base/donate/" class="cta-button">匿名贊助我們</a>
+      </p>
     </section>
 
     <section class="tagline">
@@ -63,8 +73,10 @@
   </main>
 
   <footer>
-    <p>&copy; 2025 Bones Security Technology. All rights reserved.</p>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
   </footer>
 </body>
 </html>
-

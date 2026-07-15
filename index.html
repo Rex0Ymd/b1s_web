@@ -1,12 +1,58 @@
 <!DOCTYPE html>
-<link rel="icon" href="main/images/b1s.png" type="image/png">
-<html>
-  <head>
-    <meta http-equiv="refresh" content="0; url=/main/pages/mainpage" />
-    <link rel="stylesheet" href="CSS/style.css">
-  </head>
-  <body>
-    <p>Loading...</p>
-  </body>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="0; url=main/pages/mainpage/" />
+  <title>Bones Security Technology</title>
+  <link rel="icon" href="main/images/b1s.png" type="image/png">
+  <link rel="stylesheet" href="main/CSS/style.css">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #0b0b0c;
+      color: #b392ff;
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
+    }
+    .loading-container {
+      padding: 2rem;
+      border: 1px solid #7700ff;
+      background-color: #10001a;
+      box-shadow: 0 0 15px rgba(119, 0, 255, 0.2);
+      border-radius: 4px;
+    }
+    .spinner {
+      margin: 1.5rem auto;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(179, 146, 255, 0.1);
+      border-top-color: #b392ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    a {
+      color: #d6bbff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>載入中 / Redirecting...</p>
+    <p style="font-size: 0.85rem; color: #666;">
+      如果網頁沒有自動跳轉，請 <a href="main/pages/mainpage/">點擊此處</a>。
+    </p>
+  </div>
+</body>
 </html>
-

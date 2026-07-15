@@ -1,43 +1,122 @@
 <!DOCTYPE html>
-<link rel="icon" href="../../images/b1s.png" type="image/png">
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>服務項目 - Bones Security Technology</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>服務項目與安全指南 - Bones Security Technology</title>
+  <link rel="icon" href="../../images/b1s.png" type="image/png">
   <link rel="stylesheet" href="../../CSS/style.css">
 </head>
 <body>
   <header>
     <h1>BONES SECURITY TECHNOLOGY</h1>
     <nav>
-      <a href="../mainpage">首頁</a>
-      <a href="../about">關於</a>
-      <a href="../projects">作品</a>
-      <a href="../services">服務</a>
-      <a href="../contact">聯絡</a>
+      <a href="../mainpage/">首頁</a>
+      <a href="../about/">關於</a>
+      <a href="../projects/">作品</a>
+      <a href="../services/" class="active">服務</a>
+      <a href="../contact/">聯絡</a>
     </nav>
   </header>
-  <main class="description">
-    <h2>我們提供的服務</h2>
-    <ul>
-      <li>匿名混幣器設計</li>
-      <li>加密訊息通訊系統開發</li>
-      <li>網路匿名化顧問與防追蹤系統</li>
-      <li>實戰紅隊滲透測試</li>
-    </ul>
+
+  <main class="container">
+    <section class="hero2">
+      <h2>安全服務與隱私指南</h2>
+      <p>客製化安全研發與專業資訊對抗防護</p>
+    </section>
+
+    <!-- Services Section -->
+    <section class="description">
+      <h2>我們提供的專業服務</h2>
+      <div class="project-grid" style="margin-top: 1.5rem;">
+        <div class="project-card">
+          <h4>去中心化隱私設計</h4>
+          <p>提供高度匿名混幣器架構與智能合約設計，協助客戶構建阻斷資金鏈追踪與標記的鏈上安全防護。</p>
+        </div>
+        <div class="project-card">
+          <h4>安全通訊系統開發</h4>
+          <p>研發端對端零知識（Zero-Knowledge）通訊協議與去中心化即時通訊平台，防止傳輸內容與元數據洩漏。</p>
+        </div>
+        <div class="project-card">
+          <h4>網路反偵測與隱私顧問</h4>
+          <p>量身打造防追蹤上網系統與內部隱密通訊方案，對抗針對性網路監控、流量關聯分析與資訊劫持。</p>
+        </div>
+        <div class="project-card">
+          <h4>實戰紅隊滲透測試</h4>
+          <p>模擬黑客視角進行深度系統滲透測試、脆弱性分析及社會工程學演練，幫助企業從根本消除安全死角。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Guides Section -->
+    <section class="description">
+      <h2>安全知識與小技巧</h2>
+      <p>理解數位防禦的原理，是構築個人防禦武裝的第一步。我們撰寫了以下核心技術分析文章：</p>
+
+      <div class="list-container">
+        <!-- Monero XMR -->
+        <a href="../../base/books/xmr/" class="list-item-card" aria-label="閱讀 門羅幣 (Monero XMR) 安全指南">
+          <div class="list-item-title">
+            <span>隱私加密貨幣 — Monero (XMR)</span>
+            <span class="badge badge-guide">安全指南</span>
+          </div>
+          <p class="list-item-desc">
+            深入剖析 XMR 的環簽章（Ring Signatures）、隱蔽地址（Stealth Addresses）與 RingCT 加密技術，評估操作失誤可能帶來的鏈上分析暴露風險。
+          </p>
+        </a>
+
+        <!-- ProtonMail -->
+        <a href="../../base/books/protonmail/" class="list-item-card" aria-label="閱讀 ProtonMail 安全指南">
+          <div class="list-item-title">
+            <span>隱私加密電子郵件 — ProtonMail</span>
+            <span class="badge badge-guide">安全指南</span>
+          </div>
+          <p class="list-item-desc">
+            分析 ProtonMail 的端對端 OpenPGP 加密、零存取架構與瑞士聯邦法律保護機制，掌握保護信箱免於元數據洩漏的實用技巧。
+          </p>
+        </a>
+
+        <!-- USDT TRC20 -->
+        <a href="../../base/books/usdt/" class="list-item-card" aria-label="閱讀 USDT 金流風險分析">
+          <div class="list-item-title">
+            <span>USDT 鏈上記錄與黑 U 凍結風險分析</span>
+            <span class="badge badge-guide">安全指南</span>
+          </div>
+          <p class="list-item-desc">
+            針對波場網路（TRC20）上智能合約交易的完全透明性，解析區塊鏈分析工具的集資偵測技術，揭示黑名單標記與資產凍結的防護機制。
+          </p>
+        </a>
+
+        <!-- Tor Network -->
+        <a href="../../base/books/tor/" class="list-item-card" aria-label="閱讀 Tor 網路安全指南">
+          <div class="list-item-title">
+            <span>Tor 洋蔥路由加密網絡</span>
+            <span class="badge badge-guide">安全指南</span>
+          </div>
+          <p class="list-item-desc">
+            解析洋蔥路由（Onion Routing）多跳轉傳輸原理與隱藏服務（.onion）的安全結構，並分析流量關聯與進出口節點特徵監測的潛在風險。
+          </p>
+        </a>
+
+        <!-- PGP Text Encryption -->
+        <a href="../../base/books/pgp/" class="list-item-card" aria-label="閱讀 PGP 文字加密安全指南">
+          <div class="list-item-title">
+            <span>PGP 公私鑰文字加密系統</span>
+            <span class="badge badge-guide">安全指南</span>
+          </div>
+          <p class="list-item-desc">
+            基於 OpenPGP 標準，介紹公鑰加密、私鑰解密與數位簽章的防篡改機制，評估加密報文明顯特徵可能帶來的流量識別監控。
+          </p>
+        </a>
+      </div>
+    </section>
   </main>
-  <main class="description">
-    <h2>小技巧</h2>
-    <ul>
-      <nav><a href="../../base/books/xmr">隱私加密貨幣</a></nav>
-      <nav><a href="../../base/books/protonmail">隱私加密電子郵件</a></nav>
-      <nav><a href="../../base/books/usdt">USDT存在風險分析</a></nav>
-      <nav><a href="../../base/books/tor">TOR加密網絡</a></nav>
-      <nav><a href="../../base/books/pgp">PGP文字加密系統</a></nav>
-    </ul>
-  </main>
+
   <footer>
-    <p>&copy; 2025 Bones Security Technology</p>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
   </footer>
 </body>
 </html>

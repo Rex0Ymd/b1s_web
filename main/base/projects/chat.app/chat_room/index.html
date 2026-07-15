@@ -1,71 +1,205 @@
 <!DOCTYPE html>
-<link rel="icon" sizes="180x180" href="../../../../images/b1s.png" type="image/png">
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>bones-security聊天室</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>端對端加密聊天室 - Bones Security Technology</title>
+  <link rel="icon" href="../../../../images/b1s.png" type="image/png">
   <link rel="stylesheet" href="../../../../CSS/style.css">
   <style>
-      #chat {
-      height: 320px;
-      border: 1px solid #3b2b66;
+    #chat {
+      height: 380px;
+      border: 1px solid var(--color-purple-neon);
       border-radius: 8px;
-      padding: 8px;
+      padding: 1rem;
       overflow-y: auto;
-      background: radial-gradient(circle at top left,#26164a,#050011);
-      margin-bottom: 0.5rem;
+      background: radial-gradient(circle at top left, #26164a, #050011);
+      margin-bottom: 1rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-purple-mid) var(--bg-main);
+    }
+    #chat::-webkit-scrollbar {
+      width: 6px;
+    }
+    #chat::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    #chat::-webkit-scrollbar-thumb {
+      background: var(--color-purple-dark);
+      border-radius: 3px;
     }
     .msg {
-      margin: 4px 0;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      margin: 8px 0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      max-width: 85%;
+      word-break: break-word;
+      line-height: 1.5;
     }
     .self {
-      text-align: right;
-      background: rgba(123,104,238,0.16);
+      margin-left: auto;
+      text-align: left;
+      background: rgba(123, 104, 238, 0.25);
+      border-left: 3px solid var(--color-pink-neon);
+      color: #fff;
     }
     .peer {
+      margin-right: auto;
       text-align: left;
-      background: rgba(72,61,139,0.22);
+      background: rgba(72, 61, 139, 0.35);
+      border-left: 3px solid var(--color-purple-mid);
+      color: var(--color-text-bright);
     }
     .system {
       text-align: center;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       opacity: 0.8;
+      margin: 12px auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      padding: 4px 12px;
+      border-radius: 20px;
+      display: table;
+      color: #aaa;
     }
     .system span {
       color: #ffdd55;
+      font-weight: bold;
     }
     #members {
-      font-size: 0.8rem;
-      color: #aaa;
-      margin-bottom: 0.25rem;
+      font-size: 0.85rem;
+      color: var(--color-purple-light);
+      margin-bottom: 0.5rem;
+      background-color: rgba(119, 0, 255, 0.05);
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(119, 0, 255, 0.15);
     }
     #inputRow {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.75rem;
+      margin-top: 1rem;
     }
     #messageInput {
       flex: 1;
-      padding: 0.5rem;
+      padding: 0.75rem;
       border-radius: 6px;
-      border: 1px solid #3b2b66;
+      border: 1px solid var(--color-purple-dark);
       background: #0b051c;
       color: #eee;
+      font-family: var(--font-mono);
+    }
+    #messageInput:focus {
+      border-color: var(--color-pink-neon);
+      outline: none;
     }
     #sendBtn {
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1.5rem;
       border-radius: 6px;
       border: none;
-      background: linear-gradient(135deg,#7b68ee,#ff6ad5);
+      background: linear-gradient(135deg, #7b68ee, #ff6ad5);
       color: #fff;
+      font-weight: bold;
       cursor: pointer;
-      min-width: 80px;
+      min-width: 90px;
+      transition: all 0.2s ease;
+      font-family: var(--font-mono);
+    }
+    #sendBtn:hover:not(:disabled) {
+      box-shadow: 0 0 10px rgba(255, 106, 213, 0.5);
+      transform: translateY(-1px);
     }
     #sendBtn:disabled {
       opacity: 0.4;
       cursor: not-allowed;
+    }
+    .top-bar {
+      font-size: 0.9rem;
+      background-color: #1a0f2b;
+      border: 1px solid var(--color-purple-neon);
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+      color: #fff;
+      font-weight: bold;
+    }
+    .chat-layout {
+      display: flex;
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 2rem auto;
+      align-items: stretch;
+    }
+    .chat-workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-panel {
+      width: 320px;
+      border: 1px solid var(--color-purple-neon);
+      border-radius: 8px;
+      padding: 1.25rem;
+      background: radial-gradient(circle at bottom right, #11052c, #050011);
+      color: #fff;
+      font-family: var(--font-mono);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-panel h3 {
+      font-size: 1rem;
+      color: #fff;
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(119, 0, 255, 0.2);
+      padding-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .sidebar-desc {
+      font-size: 0.8rem;
+      color: var(--color-text-bright);
+      opacity: 0.7;
+      line-height: 1.4;
+      margin-top: 0;
+      margin-bottom: 1.25rem;
+    }
+    .sidebar-label {
+      font-size: 0.8rem;
+      color: var(--color-purple-light);
+      font-weight: bold;
+      margin-bottom: 0.4rem;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .sidebar-input {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: 1px solid var(--color-purple-dark);
+      background: #0b051c;
+      color: #eee;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
+    }
+    .sidebar-input:focus {
+      border-color: var(--color-pink-neon);
+      outline: none;
+    }
+    .disconnect-btn {
+      background: linear-gradient(135deg, #cc2e5d, #ff3c3c) !important;
+    }
+    @media (max-width: 768px) {
+      .chat-layout {
+        flex-direction: column;
+      }
+      .sidebar-panel {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -73,23 +207,62 @@
   <header>
     <h1>BONES SECURITY TECHNOLOGY</h1>
     <nav>
-      <a href="https://www.bones-security.com/main/pages/mainpage/index.html">首頁</a>
-      <a href="https://www.bones-security.com/main/pages/contact/index.html">聯絡我們</a>
+      <a href="../../../../pages/mainpage/">首頁</a>
+      <a href="../../../../pages/about/">關於</a>
+      <a href="../../../../pages/projects/">作品</a>
+      <a href="../../../../pages/services/">服務</a>
+      <a href="../../../../pages/contact/">聯絡</a>
     </nav>
   </header>
-  
-  <section class="hero2">
-    <h2>加密聊天</h2>
-    <p>我們打造保護你隱私的科技武器</p>
-  </section>
-  
-  <div class="top-bar" id="roomInfo">尚未加入房間</div>
-  <div id="members">在線成員：-</div>
-  <div id="chat"></div>
-  <div id="inputRow">
-    <input id="messageInput" placeholder="輸入訊息後按 Enter 或點送出" autocomplete="off">
-    <button id="sendBtn" disabled>送出</button>
-  </div>
+
+  <main class="container" style="margin-top: 2rem;">
+    <div class="chat-layout">
+      <!-- Left Side: Chat Workspace -->
+      <div class="chat-workspace">
+        <div class="top-bar" id="roomInfo">⚡ 請在右側控制台設定安全連線...</div>
+        <div id="members">在線成員：-</div>
+        <div id="chat"></div>
+        <div id="inputRow">
+          <input id="messageInput" placeholder="請先完成右側安全連線..." autocomplete="off" aria-label="聊天訊息輸入框" disabled>
+          <button id="sendBtn" disabled>送出</button>
+        </div>
+      </div>
+
+      <!-- Right Side: Secure Console Sidebar -->
+      <aside class="sidebar-panel">
+        <h3>🔒 密鑰連線控制台</h3>
+        <p class="sidebar-desc">在此配置您的端對端對稱加密通道，所有傳輸的封包將在本地端進行高強度加密後發送至去中心化資料同步節點。</p>
+
+        <label class="sidebar-label" for="roomIdInput">房間群組 ID (Room ID)</label>
+        <input class="sidebar-input" id="roomIdInput" type="text" placeholder="例如：1234" autocomplete="off">
+
+        <label class="sidebar-label" for="roomKeyInput">端對端加密私鑰 (Password)</label>
+        <input class="sidebar-input" id="roomKeyInput" type="password" placeholder="訊息對稱加密金鑰">
+
+        <label class="sidebar-label" for="nicknameInput">通訊綽號 (Username)</label>
+        <input class="sidebar-input" id="nicknameInput" type="text" placeholder="顯示於聊天室的暱稱" autocomplete="off">
+
+        <button id="connectBtn" onclick="connectToRoom()" class="cta-button" style="width: 100%; margin-top: 0.5rem; margin-bottom: 0px;">
+          建立加密連線
+        </button>
+
+        <button id="disconnectBtn" onclick="disconnectFromRoom()" class="cta-button disconnect-btn" style="width: 100%; margin-top: 0.5rem; margin-bottom: 0px; display: none;">
+          斷開安全連線
+        </button>
+      </aside>
+    </div>
+
+    <div style="text-align: center; margin-top: 1.5rem; margin-bottom: 2rem;">
+      <a href="../" style="color: var(--color-purple-mid); text-decoration: none; font-size: 0.9rem;">&larr; 返回聊天室指引</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
+  </footer>
 
   <!-- Firebase & CryptoJS -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -97,42 +270,366 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <script>
-    function _0x1b56() {
-    var e = ["87843qlGPWU", "308554GKJsiw", "2BbMKMr", "417260BBRieq", "\\w+", "955317Bwewwj", "toString", "replace", "668yMokVi", "138LJKDkN", "60ZhXIvq", "812997zLMNwU", "116336BLkTBE", "2517eYBOcm", "split", '3 1o={2d:"2e-2f",2g:"O-G-P-Q.2h.1p",2i:"2j://O-G-P-Q-2k-2l.2m-2n.2o.2p",2q:"O-G-P-Q",2r:"O-G-P-Q.2s.1p",2t:"1q",2u:"1:1q:2v:2w"};R.2x(1o);3 1r=R.18();3 S=19("輸入房號（2y: 2z）");3 y=19("輸入房間密碼（訊息加密用，所有人要一樣）");3 1a=19("輸入你的綽號（顯示在聊天室內）")||"匿名";4(!S||!y){2A("房號與密碼必填")}3 H=1r.2B("2C/"+S);3 1b=H.T("2D");3 U=H.T("z");9 l=1s.2E("1t");4(!l){l="2F"+A.1u().1c(36).1d(2,10);1s.2G("1t",l)}3 1v=u.I("2H");3 V=u.I("z");3 w=u.I("G");3 m=u.I("2I");3 B=u.I("B");1v.J=`房號：${S}｜暱稱：${1a}`;9 W=1w;g 1x(a){6 g(){a|=0;a+=2J|0;9 t=A.1y(a^a>>>15,1|a);t=(t+A.1y(t^t>>>7,2K|t))^t;6((t^t>>>14)>>>0)/2L}}g 1e(j){3 1z=[[2M,2N],[2O,2P],[2Q,2R],[2S,2T],[2U,2V]];3 8=[],o=[],1A=1x(j);X(9[s,e]1B 1z){X(9 d=s;d<=e;d++){4(!(d<=2W||d===2X||(d>=2Y&&d<=2Z)||(d>=30&&d<=31))){3 x=1f.32(d);(1A()<0.5?8:o).K(x)}}}6[8,o]}g 1C(C,8){9 p="",b=8.h;4(!C)6 8[0];1g(C>0){p=8[C%b]+p;C=A.1D(C/b)}6 p}g 1E(Y,j){3[8,o]=1e(j);9 p="";X(9 i=0;i<Y.h;i++){3 d=Y.33(i);p+=1C(d,8);4(i<Y.h-1)p+=o[A.1D(A.1u()*o.h)];4(d>34)i++}6 p}g 1F(Z,j){3[8,o]=1e(j);9 11=[],q="";X(9 x 1B[...Z]){4(o.35(x)){9 v=0,i=0;1g(i<q.h){3 c=[...q.1d(i)][0];v=v*8.h+8.1G(c);i+=c.h}11.K(1f.1H(v));q=""}1I q+=x}4(q){9 v=0,i=0;1g(i<q.h){3 c=[...q.1d(i)][0];v=v*8.h+8.1G(c);i+=c.h}11.K(1f.1H(v))}6 11.1J("")}g 1h(12){3 1K=L.1L.37(12,y).1c();3 j=L.1M(y).1N[0];6 1E(1K,j)}g 13(Z){3 j=L.1M(y).1N[0];3 1O=1F(Z,j);38{3 1P=L.1L.39(1O,y);6 1P.1c(L.3a.3b)||"(解密失敗)"}1i{6"(解密錯誤)"}}g M(k){3 r=u.1Q("1R");r.1S="k 3c";r.3d=`<1T>系統</1T>：${k}`;w.1U(r);w.1V=w.1W}g 1X(f,D,1j){3 r=u.1Q("1R");r.1S="k "+(1j?"1j":"3e");r.J=`${f}：${D}`;w.1U(r);w.1V=w.1W}3 1k=1h(1a);U.T(l).3f({1l:1k,3g:R.18.1Y.1Z});U.T(l).3h().1m();U.20("16",N=>{4(!N.3i()){4(!W){W=E;H.1m().1i(17=>21.22("刪除房間失敗：",17))}V.J="在線成員：-";4(!m.F){M("房間已無成員或被銷毀，伺服器已清除房間與訊息");m.F=E;B.F=E}6}3 z=[];N.3j(x=>{3 v=x.23();4(v&&v.1l){3 12=13(v.1l);z.K(12||"無名")}});V.J="在線成員："+(z.h?z.1J("、"):"-")});M("已加入房間，暱稱與訊息都以 3k 端到端加密");M("輸入 !24! 可手動銷毀房間（所有訊息與成員會被踢出）");1b.3l(3m).20("3n",N=>{3 k=N.23();4(!k)6;3 25=13(k.26);9 f="";4(k.f){f=13(k.f);4(!f||f.3o("(")){f="未知用戶"}}1I{f="未知用戶"}3 27=(k.28===l);1X(f,25,27)});g 1n(){3 D=m.16.3p();4(!D)6;4(D==="!24!"){3 29=3q("⚠️ 確定要銷毀此房間？\\n這會刪除所有訊息，並踢出所有成員。");m.16="";4(!29)6;W=E;H.1m().3r(()=>{V.J="在線成員：-";M("你已銷毀此房間，所有成員已被踢出。");m.F=E;B.F=E}).1i(17=>21.22("手動銷毀房間失敗：",17));6}3 2a=1h(D);3 2b=1k;1b.K({28:l,f:2b,26:2a,3s:R.18.1Y.1Z});m.16=""}B.2c("3t",1n);m.2c("3u",e=>{4(e.3v==="3w"){e.3x();1n()}});B.F=1w;'];
-    return (_0x1b56 = function() {
-        return e
-    })()
-}
-var _0x5dca69 = _0x5132;
+    // Firebase Configuration using correctly decoded keys
+    const firebaseConfig = {
+      apiKey: "AIzaSyBktU0zTENYrhASjX0-9317jjeOY9KxTEE",
+      authDomain: "test-chat-room-cd4a6.firebaseapp.com",
+      databaseURL: "https://test-chat-room-cd4a6-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "test-chat-room-cd4a6",
+      storageBucket: "test-chat-room-cd4a6.appspot.com",
+      messagingSenderId: "537961446878",
+      appId: "1:537961446878:web:005751d2770817c0cdb14f"
+    };
 
-function _0x5132(e, t) {
-    var r, n;
-    return e -= 485, _0x1b56()[e]
-}(function(e, t) {
-    for (var r = _0x5132, n = e();;) try {
-        var o;
-        if (201799 === parseInt(r(486)) / 1 * (-parseInt(r(487)) / 2) + -parseInt(r(498)) / 3 * (parseInt(r(493)) / 4) + -parseInt(r(488)) / 5 + parseInt(r(494)) / 6 * (parseInt(r(485)) / 7) + parseInt(r(497)) / 8 + -parseInt(r(496)) / 9 + parseInt(r(495)) / 10 * (parseInt(r(490)) / 11)) break;
-        n.push(n.shift())
-    } catch (e) {
-        n.push(n.shift())
+    // Firebase App Singleton Initialization
+    let app;
+    if (firebase.apps.length === 0) {
+      app = firebase.initializeApp(firebaseConfig);
+    } else {
+      app = firebase.app();
     }
-})(_0x1b56, 201799), eval(function(e, t, r, n, o, a) {
-    var i = _0x5132;
-    if (o = function(e) {
-            var t = _0x5132;
-            return (e < 62 ? "" : o(parseInt(e / 62))) + ((e %= 62) > 35 ? String.fromCharCode(e + 29) : e[t(491)](36))
-        }, !"" [i(492)](/^/, String)) {
-        for (; r--;) a[o(r)] = n[r] || o(r);
-        n = [function(e) {
-            return a[e]
-        }], o = function() {
-            var e;
-            return i(489)
-        }, r = 1
+    const db = firebase.database();
+
+    // Responsive Connection State Machine
+    let currentRoomId = null;
+    let roomKey = null;
+    let encNick = null;
+    let roomRef = null;
+    let messagesRef = null;
+    let membersRef = null;
+    let uid = null;
+    let destroyed = false;
+
+    // DOM Elements Cache
+    const roomInfoEl = document.getElementById("roomInfo");
+    const membersEl = document.getElementById("members");
+    const chatDiv = document.getElementById("chat");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    // PRNG Algorithm (mulberry32)
+    function mulberry32(a) {
+      return function() {
+        a |= 0;
+        a += 0x6D2B79F5 | 0;
+        let t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = (t + Math.imul(t ^ t >>> 7, 61 | t)) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
     }
-    for (; r--;) n[r] && (e = e.replace(RegExp("\\b" + o(r) + "\\b", "g"), n[r]));
-    return e
-}(_0x5dca69(500), 62, 220, "|||const|if||return||base|let||||cp||fromNick|function|length||seed|msg|uid|inputEl||sep|out|tmp|el|||document||chatDiv|ch|roomKey|members|Math|sendBtn|code|text|true|disabled|chat|roomRef|getElementById|textContent|push|CryptoJS|appendSystem|snap|test|room|cd4a6|firebase|roomId|child|membersRef|membersEl|destroyed|for|txt|emj||res|plain|emojiDecrypt|||value|err|database|prompt|nickRaw|messagesRef|toString|slice|generateEmojis|String|while|emojiEncrypt|catch|self|encNick|nick|remove|sendMessage|firebaseConfig|com|537961446878|db|sessionStorage|bones_chat_uid|random|roomInfoEl|false|mulberry32|imul|ranges|rng|of|intToEmoji|floor|emojiEncode|emojiDecode|indexOf|fromCharCode|else|join|aes|AES|MD5|words|b64|dec|createElement|div|className|span|appendChild|scrollTop|scrollHeight|appendMsg|ServerValue|TIMESTAMP|on|console|error|val|destroy|plainText|body|isSelf|fromId|ok|cipherBody|cipherNick|addEventListener|apiKey|AIzaSyBktU0zTENYrhASjX0|9317jjeOY9KxTEE|authDomain|firebaseapp|databaseURL|https|default|rtdb|europe|west1|firebasedatabase|app|projectId|storageBucket|appspot|messagingSenderId|appId|web|005751d2770817c0cdb14f|initializeApp|ex|1234|alert|ref|groupRooms|messages|getItem|u_|setItem|roomInfo|messageInput|0x6D2B79F5|61|4294967296|0x1F600|0x1F636|0x1F300|0x1F320|0x1F680|0x1F6A3|0x2700|0x2752|0x2600|0x2613|0x1F|0x7F|0xFE00|0xFE0F|0x200D|0x200F|fromCodePoint|codePointAt|0xffff|includes||encrypt|try|decrypt|enc|Utf8|system|innerHTML|peer|set|joinedAt|onDisconnect|exists|forEach|Emoji|limitToLast|200|child_added|startsWith|trim|confirm|then|ts|click|keydown|key|Enter|preventDefault" [_0x5dca69(499)]("|"), 0, {}));
+
+    // Dynamic Seed-Based Emoji Generation Table
+    function generateEmojis(seed) {
+      const ranges = [
+        [0x1F600, 0x1F636],
+        [0x1F300, 0x1F320],
+        [0x1F680, 0x1F6A3],
+        [0x2700, 0x2752],
+        [0x2600, 0x2613]
+      ];
+      const base = [], sep = [];
+      const rng = mulberry32(seed);
+      for (let [s, e] of ranges) {
+        for (let d = s; d <= e; d++) {
+          if (!(d <= 0x1F || d === 0x7F || (d >= 0xFE00 && d <= 0xFE0F) || (d >= 0x200D && d <= 0x200F))) {
+            const x = String.fromCodePoint(d);
+            (rng() < 0.5 ? base : sep).push(x);
+          }
+        }
+      }
+      return [base, sep];
+    }
+
+    // Convert Integer Code Point to Base Emojis
+    function intToEmoji(code, base) {
+      let out = "", b = base.length;
+      if (!code) return base[0];
+      while (code > 0) {
+        out = base[code % b] + out;
+        code = Math.floor(code / b);
+      }
+      return out;
+    }
+
+    // Ciphertext to Emoji Encoder
+    function emojiEncode(txt, seed) {
+      const [base, sep] = generateEmojis(seed);
+      let out = "";
+      for (let i = 0; i < txt.length; i++) {
+        const d = txt.codePointAt(i);
+        out += intToEmoji(d, base);
+        if (i < txt.length - 1) {
+          out += sep[Math.floor(Math.random() * sep.length)];
+        }
+        if (d > 0xffff) i++;
+      }
+      return out;
+    }
+
+    // Emoji to Ciphertext Decoder
+    function emojiDecode(emj, seed) {
+      const [base, sep] = generateEmojis(seed);
+      let res = [], q = "";
+      for (let x of [...emj]) {
+        if (sep.includes(x)) {
+          let v = 0, i = 0;
+          while (i < q.length) {
+            const c = [...q.slice(i)][0];
+            v = v * base.length + base.indexOf(c);
+            i += c.length;
+          }
+          res.push(String.fromCodePoint(v));
+          q = "";
+        } else {
+          q += x;
+        }
+      }
+      if (q) {
+        let v = 0, i = 0;
+        while (i < q.length) {
+          const c = [...q.slice(i)][0];
+          v = v * base.length + base.indexOf(c);
+          i += c.length;
+        }
+        res.push(String.fromCodePoint(v));
+      }
+      return res.join("");
+    }
+
+    // Cryptographic Emoji-AES Encryption Layer
+    function emojiEncrypt(plainText) {
+      const enc = CryptoJS.AES.encrypt(plainText, roomKey).toString();
+      const j = CryptoJS.MD5(roomKey).words[0];
+      return emojiEncode(enc, j);
+    }
+
+    // Cryptographic Emoji-AES Decryption Layer
+    function emojiDecrypt(emj) {
+      const j = CryptoJS.MD5(roomKey).words[0];
+      const b64 = emojiDecode(emj, j);
+      try {
+        const dec = CryptoJS.AES.decrypt(b64, roomKey);
+        return dec.toString(CryptoJS.enc.Utf8) || "(解密失敗)";
+      } catch {
+        return "(解密錯誤)";
+      }
+    }
+
+    // UI Helper: Render System Message
+    function appendSystem(msg) {
+      const el = document.createElement("div");
+      el.className = "msg system";
+      el.innerHTML = `<span>系統</span>：${msg}`;
+      chatDiv.appendChild(el);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    // UI Helper: Render User Message
+    function appendMsg(fromNick, text, isSelf) {
+      const el = document.createElement("div");
+      el.className = "msg " + (isSelf ? "self" : "peer");
+      el.textContent = `${fromNick}：${text}`;
+      chatDiv.appendChild(el);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    // Connect to secure chat room
+    function connectToRoom() {
+      const roomIdInput = document.getElementById("roomIdInput").value.trim();
+      const roomKeyInput = document.getElementById("roomKeyInput").value.trim();
+      const nicknameInput = document.getElementById("nicknameInput").value.trim() || "匿名";
+
+      if (!roomIdInput || !roomKeyInput) {
+        alert("房間 ID 與加密私鑰為必填欄位！");
+        return;
+      }
+
+      // Disable inputs to freeze configuration
+      document.getElementById("roomIdInput").disabled = true;
+      document.getElementById("roomKeyInput").disabled = true;
+      document.getElementById("nicknameInput").disabled = true;
+
+      // Lock Connection State
+      currentRoomId = roomIdInput;
+      roomKey = roomKeyInput;
+
+      // Generate or retrieve Session UID
+      uid = sessionStorage.getItem("bones_chat_uid");
+      if (!uid) {
+        uid = "u_" + Math.random().toString(36).slice(2, 10);
+        sessionStorage.setItem("bones_chat_uid", uid);
+      }
+
+      // Encrypt nickname using room key
+      encNick = emojiEncrypt(nicknameInput);
+
+      // Setup Firebase references
+      roomRef = db.ref("groupRooms/" + currentRoomId);
+      messagesRef = roomRef.child("messages");
+      membersRef = roomRef.child("members");
+
+      // Reset and display connected state
+      chatDiv.innerHTML = "";
+      roomInfoEl.textContent = `房號：${currentRoomId}｜暱稱：${nicknameInput}`;
+
+      // Join room by publishing member node
+      membersRef.child(uid).set({
+        nick: encNick,
+        joinedAt: firebase.database.ServerValue.TIMESTAMP
+      }).then(() => {
+        // Enable messaging interface
+        messageInput.disabled = false;
+        sendBtn.disabled = false;
+        messageInput.placeholder = "輸入訊息後按 Enter 或點送出";
+        messageInput.focus();
+
+        // Register disconnection presence removal
+        membersRef.child(uid).onDisconnect().remove();
+
+        // Listen for online members synchronization
+        membersRef.on("value", snap => {
+          if (!snap.exists()) {
+            if (!destroyed) {
+              destroyed = true;
+              roomRef.remove().catch(err => console.error("刪除房間失敗：", err));
+            }
+            membersEl.textContent = "在線成員：-";
+            if (!messageInput.disabled) {
+              appendSystem("房間已無成員或被銷毀，伺服器已清除房間與訊息");
+              messageInput.disabled = true;
+              sendBtn.disabled = true;
+            }
+            return;
+          }
+          const nicks = [];
+          snap.forEach(x => {
+            const v = x.val();
+            if (v && v.nick) {
+              const dec = emojiDecrypt(v.nick);
+              nicks.push(dec || "無名");
+            }
+          });
+          membersEl.textContent = "在線成員：" + (nicks.length ? nicks.join("、") : "-");
+        });
+
+        // Listen for encrypted messages
+        messagesRef.limitToLast(200).on("child_added", snap => {
+          const msg = snap.val();
+          if (!msg) return;
+          const plainText = emojiDecrypt(msg.body);
+          let fromNick = "";
+          if (msg.fromNick) {
+            fromNick = emojiDecrypt(msg.fromNick);
+            if (!fromNick || fromNick.startsWith("(")) {
+              fromNick = "未知用戶";
+            }
+          } else {
+            fromNick = "未知用戶";
+          }
+          const isSelf = (msg.fromId === uid);
+          appendMsg(fromNick, plainText, isSelf);
+        });
+
+        appendSystem("已成功建立去中心化安全連線，所有傳輸的封包皆以 Emoji 對稱端到端加密保護。");
+        appendSystem("輸入 !destroy 可手動銷毀房間並強制踢出所有連線成員。");
+
+        // Toggle state button display
+        document.getElementById("connectBtn").style.display = "none";
+        document.getElementById("disconnectBtn").style.display = "block";
+      }).catch(err => {
+        alert("連線建立失敗：" + err.message);
+        disconnectFromRoom();
+      });
+    }
+
+    // Disconnect and clean up session
+    function disconnectFromRoom() {
+      // Remove our member entry from database
+      if (membersRef && uid) {
+        membersRef.child(uid).remove();
+      }
+
+      // Turn off real-time listeners
+      if (membersRef) membersRef.off();
+      if (messagesRef) messagesRef.off();
+
+      // Wipe workspace UI
+      chatDiv.innerHTML = "";
+      appendSystem("您已斷開安全連線。");
+      roomInfoEl.textContent = "⚡ 請在右側控制台設定安全連線...";
+      membersEl.textContent = "在線成員：-";
+
+      // Reset state variables
+      currentRoomId = null;
+      roomKey = null;
+      encNick = null;
+      roomRef = null;
+      messagesRef = null;
+      membersRef = null;
+      destroyed = false;
+
+      // Re-enable and reset sidebar inputs
+      document.getElementById("roomIdInput").disabled = false;
+      document.getElementById("roomKeyInput").disabled = false;
+      document.getElementById("nicknameInput").disabled = false;
+
+      // Disable workspace input
+      messageInput.disabled = true;
+      sendBtn.disabled = true;
+      messageInput.placeholder = "請先完成右側安全連線...";
+
+      // Toggle state button display
+      document.getElementById("connectBtn").style.display = "block";
+      document.getElementById("disconnectBtn").style.display = "none";
+    }
+
+    // Message transmission execution
+    function sendMessage() {
+      if (!currentRoomId) return;
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      if (text === "!destroy") {
+        const ok = confirm("⚠️ 確定要手動銷毀此加密聊天室？\n這會清除波場通道內的所有歷史訊息，並將其餘在線成員全數斷線踢出。");
+        messageInput.value = "";
+        if (!ok) return;
+        destroyed = true;
+        roomRef.remove().then(() => {
+          membersEl.textContent = "在線成員：-";
+          appendSystem("您已手動銷毀此房間。");
+          disconnectFromRoom();
+        }).catch(err => console.error("手動銷毀房間失敗：", err));
+        return;
+      }
+
+      const cipherBody = emojiEncrypt(text);
+      const cipherNick = encNick;
+
+      messagesRef.push({
+        fromId: uid,
+        fromNick: cipherNick,
+        body: cipherBody,
+        ts: firebase.database.ServerValue.TIMESTAMP
+      });
+
+      messageInput.value = "";
+    }
+
+    // Event Listeners Wire-up
+    sendBtn.addEventListener("click", sendMessage);
+    messageInput.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Clean up presence synchronously when window is closed/unloaded
+    window.addEventListener("beforeunload", () => {
+      if (membersRef && uid) {
+        membersRef.child(uid).remove();
+      }
+    });
   </script>
 </body>
 </html>

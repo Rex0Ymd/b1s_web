@@ -2,34 +2,182 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>Emoji 圖片加密（8 執行緒＋分段512＋進度）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emoji 圖片混淆加密工具 - Bones Security Technology</title>
+  <link rel="icon" href="../../../images/b1s.png" type="image/png">
+  <link rel="stylesheet" href="../../../CSS/style.css">
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 1rem; }
-    input, button, textarea { width: 100%; margin: .5rem 0; }
-    textarea { height: 160px; font-family: monospace; }
-    img { max-width: 100%; margin-top: 1rem; border: 1px solid #ccc; }
-    .info { font-size: .9rem; color: #333; }
+    input[type="text"], textarea {
+      background-color: #0c061d;
+      border: 1px solid var(--color-purple-dark);
+      color: #eee;
+      padding: 0.75rem;
+      border-radius: 6px;
+      width: 100%;
+      margin: 0.5rem 0 1.25rem 0;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--color-pink-neon);
+      outline: none;
+    }
+    textarea {
+      height: 150px;
+      resize: vertical;
+    }
+    input[type="file"] {
+      background: #121214;
+      border: 1px solid #222;
+      padding: 0.75rem;
+      border-radius: 6px;
+      width: 100%;
+      margin: 0.5rem 0 1.25rem 0;
+      color: var(--color-text-main);
+      font-family: var(--font-mono);
+    }
+    input[type="file"]:focus {
+      border-color: var(--color-purple-mid);
+      outline: none;
+    }
+    .info {
+      font-size: 0.9rem;
+      color: var(--color-purple-light);
+      margin-bottom: 1rem;
+      font-weight: bold;
+      background-color: rgba(119, 0, 255, 0.05);
+      padding: 6px 12px;
+      border-radius: 4px;
+      display: inline-block;
+      border: 1px solid rgba(119, 0, 255, 0.15);
+    }
+    hr {
+      border: 0;
+      border-top: 1px solid #222;
+      margin: 2.5rem 0;
+    }
+    .encrypt-button, .decrypt-button {
+      width: 100%;
+      padding: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin: 0.5rem 0 1.25rem 0;
+    }
+    .encrypt-button {
+      background: linear-gradient(135deg, var(--color-purple-neon), var(--color-pink-neon));
+      color: #fff;
+    }
+    .encrypt-button:hover:not(:disabled) {
+      box-shadow: 0 0 12px rgba(255, 106, 213, 0.5);
+      transform: translateY(-1px);
+    }
+    .decrypt-button {
+      background-color: #9b59b6;
+      color: #fff;
+    }
+    .decrypt-button:hover:not(:disabled) {
+      background-color: #8e44ad;
+      box-shadow: 0 0 12px rgba(155, 89, 182, 0.5);
+      transform: translateY(-1px);
+    }
+    .encrypt-button:disabled, .decrypt-button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    .result-img-wrapper {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .result-img-wrapper img {
+      max-width: 100%;
+      max-height: 400px;
+      border: 1px solid var(--color-purple-dark);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      margin-top: 0.5rem;
+    }
+    .field-label {
+      font-weight: bold;
+      color: var(--color-purple-light);
+      font-size: 1rem;
+      display: block;
+    }
   </style>
 </head>
 <body>
-  <h2>Emoji 圖片加密（8 執行緒＋512 分段＋進度）</h2>
+  <header>
+    <h1>BONES SECURITY TECHNOLOGY</h1>
+    <nav>
+      <a href="../../../pages/mainpage/">首頁</a>
+      <a href="../../../pages/about/">關於</a>
+      <a href="../../../pages/projects/">作品</a>
+      <a href="../../../pages/services/">服務</a>
+      <a href="../../../pages/contact/">聯絡</a>
+    </nav>
+  </header>
 
-  <label>1. 選擇圖片：</label>
-  <input type="file" id="imageInput" accept="image/*">
+  <main class="container">
+    <section class="hero2">
+      <h2>Emoji 圖片混淆加密工具</h2>
+      <p>基於 AES-256 與多線程的端對端表情符號加密工具</p>
+    </section>
 
-  <label>2. 輸入密鑰：</label>
-  <input type="text" id="secretKey" placeholder="雙方相同才能解密">
+    <section class="description" style="max-width: 900px; margin-bottom: 3rem;">
+      <p>
+        本工具採用 AES-256 對圖片進行端對端加密，並利用 Web Workers 開啟多達 8 個後台線程，將加密後的二進制數據混淆編碼為看起來毫無規律的 Emoji 表情符號。這能有效防止第三方平台或監控系統對您的圖片進行自動化 OCR 或圖形特徵分析。
+      </p>
 
-  <button id="encryptBtn" onclick="encryptImage()">加密並轉成 Emoji</button>
-  <div class="info" id="encryptInfo">尚未開始</div>
-  <textarea id="emojiOutput" placeholder="加密後的 Emoji 將在此顯示"></textarea>
+      <hr>
 
-  <hr>
+      <!-- Encryption Section -->
+      <h3 style="color: #ff6ad5; border-bottom: 1px solid #222; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">圖片加密 & Emoji 編碼</h3>
 
-  <label>3. 將上面 Emoji 貼到這裡：</label>
-  <textarea id="emojiInput" placeholder="貼入 Emoji"></textarea>
-  <button id="decryptBtn" onclick="decryptImage()" disabled>解密並顯示圖片</button>
-  <img id="resultImage" alt="解密後圖片">
+      <label class="field-label" for="imageInput">1. 選擇待加密圖片：</label>
+      <input type="file" id="imageInput" accept="image/*">
+
+      <label class="field-label" for="secretKey">2. 輸入通訊密鑰（雙方必須相同）：</label>
+      <input type="text" id="secretKey" placeholder="輸入高強度密碼（本金鑰僅用於本地瀏覽器加解密，永不上傳）">
+
+      <button id="encryptBtn" class="encrypt-button" onclick="encryptImage()">加密並轉成 Emoji</button>
+
+      <div>
+        <span class="field-label" style="display: inline-block; margin-right: 10px;">加密進度：</span>
+        <div class="info" id="encryptInfo">尚未開始</div>
+      </div>
+
+      <label class="field-label" for="emojiOutput">3. 加密後的 Emoji 密文（可全選複製發送）：</label>
+      <textarea id="emojiOutput" placeholder="加密與混淆後的 Emoji 將在此顯示" readonly></textarea>
+
+      <hr>
+
+      <!-- Decryption Section -->
+      <h3 style="color: #9b59b6; border-bottom: 1px solid #222; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">Emoji 解碼 & 圖片解密</h3>
+
+      <label class="field-label" for="emojiInput">1. 貼入收到的 Emoji 密文：</label>
+      <textarea id="emojiInput" placeholder="在此處貼入完整的 Emoji 密文"></textarea>
+
+      <button id="decryptBtn" class="decrypt-button" onclick="decryptImage()" disabled>解密並還原圖片</button>
+
+      <label class="field-label">2. 解密後的還原圖片：</label>
+      <div class="result-img-wrapper">
+        <img id="resultImage" alt="還原後的圖片將在此處顯示">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
+  </footer>
 
   <!-- 載入 CryptoJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -80,7 +228,7 @@
       const out  = document.getElementById("emojiOutput");
       const btn  = document.getElementById("encryptBtn");
       const decBtn = document.getElementById("decryptBtn");
-      info.textContent = ""; out.value = ""; decBtn.disabled = true;
+      info.textContent = "準備中..."; out.value = ""; decBtn.disabled = true;
       if (!file) return alert("請先選擇圖片");
       if (!key)  return alert("請輸入密鑰");
 
@@ -127,7 +275,6 @@
             }
             self.postMessage({ idx, emj });
           }
-          // Worker 全部它的段都送完
           self.postMessage({ done: id });
         };
       `;
@@ -150,18 +297,15 @@
             completed++;
             info.textContent = `共 ${total} 段，加密中：${completed}/${total}`;
             if (completed === total) {
-              // 全部結束 → 拼接、展示
               const finalEmj = results.join("");
               out.value = finalEmj;
               info.textContent = `完成：共 ${total} 段`;
               decBtn.disabled = false;
               btn.disabled = false;
-              // 終止所有 workers
               workers.forEach(wk => wk.terminate());
             }
           }
         };
-        // 傳入參數給 Worker
         w.postMessage({
           segments,
           base: BASE_EMOJIS,
@@ -176,18 +320,31 @@
     function decryptImage() {
       const emj = document.getElementById("emojiInput").value.trim();
       const key = document.getElementById("secretKey").value.trim();
+      const resultImg = document.getElementById("resultImage");
+      resultImg.src = "";
       if (!emj) return alert("請貼上加密後的 Emoji");
       if (!key) return alert("請輸入相同密鑰");
 
-      // 1. 重建字典
-      const seed = CryptoJS.MD5(key).words[0];
-      const [B, S] = generateEmojis(seed);
+      try {
+        // 1. 重建字典
+        const seed = CryptoJS.MD5(key).words[0];
+        const [B, S] = generateEmojis(seed);
 
-      // 2. Emoji → Base64
-      let tmp = "", b64 = "";
-      for (let ch of [...emj]) {
-        if (S.includes(ch)) {
-          // 反向解碼該段
+        // 2. Emoji → Base64
+        let tmp = "", b64 = "";
+        for (let ch of [...emj]) {
+          if (S.includes(ch)) {
+            let v = 0, j = 0;
+            while (j < tmp.length) {
+              const c = [...tmp.slice(j)][0];
+              v = v * B.length + B.indexOf(c);
+              j += c.length;
+            }
+            b64 += String.fromCharCode(v);
+            tmp = "";
+          } else tmp += ch;
+        }
+        if (tmp) {
           let v = 0, j = 0;
           while (j < tmp.length) {
             const c = [...tmp.slice(j)][0];
@@ -195,31 +352,26 @@
             j += c.length;
           }
           b64 += String.fromCharCode(v);
-          tmp = "";
-        } else tmp += ch;
-      }
-      // 處理最後一段
-      if (tmp) {
-        let v = 0, j = 0;
-        while (j < tmp.length) {
-          const c = [...tmp.slice(j)][0];
-          v = v * B.length + B.indexOf(c);
-          j += c.length;
         }
-        b64 += String.fromCharCode(v);
+
+        // 3. AES 解密
+        const json = CryptoJS.AES.decrypt(b64, key)
+                       .toString(CryptoJS.enc.Utf8);
+        if (!json) return alert("解密失敗，請確認密鑰正確");
+
+        // 4. 重建圖片
+        const obj = JSON.parse(json);
+        resultImg.src = `data:${obj.type};base64,${obj.data}`;
+      } catch (err) {
+        console.error(err);
+        alert("還原失敗，請檢查輸入內容是否完整或金鑰是否正確。");
       }
-
-      // 3. AES 解密
-      const json = CryptoJS.AES.decrypt(b64, key)
-                     .toString(CryptoJS.enc.Utf8);
-      if (!json) return alert("解密失敗，請確認密鑰正確");
-
-      // 4. 重建圖片
-      const obj = JSON.parse(json);
-      document.getElementById("resultImage").src =
-        `data:${obj.type};base64,${obj.data}`;
     }
+
+    // 貼上文字後自動啟動解密按鈕
+    document.getElementById("emojiInput").addEventListener("input", function() {
+      document.getElementById("decryptBtn").disabled = !this.value.trim();
+    });
   </script>
 </body>
 </html>
-

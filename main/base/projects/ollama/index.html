@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - Qwythos - Bones Security Technology</title>
+    <link rel="icon" href="../../../images/b1s.png" type="image/png">
+    <link rel="stylesheet" href="../../../CSS/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar matching the cyberpunk purple/black aesthetic */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #050209;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #250a3f;
+            border-radius: 4px;
+            border: 1px solid rgba(119, 0, 255, 0.2);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #7700ff;
+            border-color: #ff6ad5;
+        }
+
+        /* Pulsing indicator animation */
+        .pulse-glow {
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+            animation: pulse-green 2s infinite;
+        }
+        .pulse-glow-red {
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+            animation: pulse-red 2s infinite;
+        }
+        .pulse-glow-yellow {
+            box-shadow: 0 0 8px rgba(234, 179, 8, 0.5);
+            animation: pulse-yellow 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 4px rgba(34, 197, 94, 0.4); }
+            50% { transform: scale(1.15); box-shadow: 0 0 12px rgba(34, 197, 94, 0.8); }
+            100% { transform: scale(0.95); box-shadow: 0 0 4px rgba(34, 197, 94, 0.4); }
+        }
+        @keyframes pulse-red {
+            0% { transform: scale(0.95); box-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
+            50% { transform: scale(1.15); box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); }
+            100% { transform: scale(0.95); box-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
+        }
+        @keyframes pulse-yellow {
+            0% { transform: scale(0.95); box-shadow: 0 0 4px rgba(234, 179, 8, 0.4); }
+            50% { transform: scale(1.15); box-shadow: 0 0 12px rgba(234, 179, 8, 0.8); }
+            100% { transform: scale(0.95); box-shadow: 0 0 4px rgba(234, 179, 8, 0.4); }
+        }
+
+        /* Message balloon typography */
+        .chat-row {
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+
+        /* Typing cursor */
+        .typing::after {
+            content: '▊';
+            color: #ff6ad5;
+            margin-left: 2px;
+            animation: blink-cursor 0.8s infinite;
+        }
+        @keyframes blink-cursor {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Custom glow borders and inputs */
+        .cyber-panel {
+            background-color: #0b0512;
+            border: 1px solid rgba(119, 0, 255, 0.25);
+            box-shadow: 0 0 20px rgba(119, 0, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .cyber-panel:hover {
+            border-color: rgba(119, 0, 255, 0.4);
+            box-shadow: 0 0 25px rgba(119, 0, 255, 0.15);
+        }
+        .cyber-input {
+            background-color: #06020a;
+            border: 1px solid rgba(119, 0, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+        .cyber-input:focus {
+            border-color: #ff6ad5;
+            box-shadow: 0 0 10px rgba(255, 106, 213, 0.25);
+            outline: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-200 min-h-screen flex flex-col justify-between font-mono">
+
+    <header>
+        <h1>BONES SECURITY TECHNOLOGY</h1>
+        <nav>
+            <a href="../../../pages/mainpage/">首頁</a>
+            <a href="../../../pages/about/">關於</a>
+            <a href="../../../pages/projects/">作品</a>
+            <a href="../../../pages/services/">服務</a>
+            <a href="../../../pages/contact/">聯絡</a>
+        </nav>
+    </header>
+
+    <main class="container flex-1 py-8 flex flex-col items-center">
+        <section class="hero2 w-full">
+            <h2>Bones-Security AI 助手</h2>
+            <p>專為紅隊測試、漏洞研究與攻擊鏈分析打造的資安助手</p>
+        </section>
+
+        <!-- Chat Dashboard Panel -->
+        <div class="w-full max-w-4xl cyber-panel rounded-lg flex flex-col h-[70vh] overflow-hidden">
+
+            <!-- Panel Header -->
+            <div class="p-4 border-b border-[#7700ff]/20 bg-[#110822] flex justify-between items-center flex-wrap gap-3">
+                <div class="flex items-center space-x-3">
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-yellow-500 pulse-glow-yellow" id="status-dot"></span>
+                    <h1 class="text-sm md:text-base font-bold text-purple-200 tracking-wider">SYSTEM CONNECTED</h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-xs text-gray-400">
+                        服務端：<span id="api-status" class="text-yellow-500 font-bold">檢查中...</span>
+                    </div>
+                    <button onclick="clearChat()" class="text-xs border border-purple-500/30 hover:border-pink-500/50 hover:text-pink-300 text-purple-300 py-1.5 px-3 rounded transition font-mono flex items-center gap-1.5 bg-[#150a29]/50">
+                        清除對話
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages Area -->
+            <div id="chat-history" class="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-4 flex flex-col bg-[#050209]">
+                <!-- Messages will be appended here dynamically -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-4 border-t border-[#7700ff]/20 bg-[#100720]/80 backdrop-blur-sm">
+                <div class="relative flex flex-col sm:flex-row gap-3 items-end">
+                    <textarea id="user-input" rows="3"
+                        class="w-full p-3.5 rounded-lg text-sm text-gray-100 placeholder-gray-600 resize-none cyber-input"
+                        placeholder="請輸入您的問題..."></textarea>
+
+                    <button id="send-button" onclick="sendMessage()" class="cta-button w-full sm:w-auto h-12 !my-0 flex items-center justify-center px-8 text-sm tracking-wider whitespace-nowrap">
+                        傳送指令
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+        <script>
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+        </script>
+    </footer>
+
+    <script>
+        // System Config and Identity
+        const SYSTEM_PROMPT = '你是一個由 Bones Security Technology 開發的專業、注重隱私與數碼安全的 AI 助手。請始終使用繁體中文（台灣）回答問題。你對資安、密碼學、匿名網路（如 Tor/PGP）、反偵測技術與去中心化金流有極為深刻的理解，請以專業、科學且嚴謹的語氣提供詳細的安全指導。';
+
+        const OLLAMA_BASE_URL = 'https://ollama.bones-security.xyz'.replace(/\/+$/, '');
+        const OLLAMA_ENDPOINTS = Object.freeze({
+            tags: `${OLLAMA_BASE_URL}/api/tags`,
+            chat: `${OLLAMA_BASE_URL}/api/chat`
+        });
+
+        const BUILD_MARKER = 'ollama-chat-fix-2026-07-12-v2';
+        console.info('[BUILD]', BUILD_MARKER);
+        console.info('[OLLAMA_ENDPOINTS]', OLLAMA_ENDPOINTS);
+
+        // Global model state initialized to the requested default
+        let activeModel = 'dzgg/Gemma-4-Uncensored-HauhauCS-Aggressive:e2b';
+
+        // Global streaming and abort control states
+        let activeAbortController = null;
+        let pendingContent = '';
+        let renderScheduled = false;
+
+        function stopGeneration() {
+            if (activeAbortController) {
+                activeAbortController.abort();
+                activeAbortController = null;
+            }
+        }
+
+        // Throttled streaming rendering helpers
+        function renderStreamingText(text) {
+            return escapeHtml(text).replace(/\n/g, '<br>');
+        }
+
+        function scheduleStreamRender(element, content) {
+            pendingContent = content;
+
+            if (renderScheduled) {
+                return;
+            }
+
+            renderScheduled = true;
+
+            requestAnimationFrame(() => {
+                element.innerHTML =
+                    renderStreamingText(pendingContent);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+                renderScheduled = false;
+            });
+        }
+
+        // ─── Standard JSON Request Helper (Requirement-Specific Error Handling) ───
+        async function requestJson(url, options = {}) {
+            let response;
+
+            try {
+                response = await fetch(url, options);
+            } catch (cause) {
+                const error = new Error(
+                    `Network request failed before an HTTP response was received: ` +
+                    `${cause instanceof Error ? cause.message : String(cause)}`
+                );
+
+                error.kind = 'network';
+                error.endpoint = url;
+                error.status = null;
+                error.statusText = '';
+                error.responseBody = '';
+                error.parsedJson = null;
+                error.cause = cause;
+
+                throw error;
+            }
+
+            const responseBody = await response.text();
+
+            let parsedJson = null;
+
+            if (responseBody) {
+                try {
+                    parsedJson = JSON.parse(responseBody);
+                } catch {
+                    parsedJson = null;
+                }
+            }
+
+            if (!response.ok) {
+                const error = new Error(
+                    `HTTP ${response.status} ${response.statusText}`.trim()
+                );
+
+                error.kind = 'http';
+                error.endpoint = url;
+                error.status = response.status;
+                error.statusText = response.statusText;
+                error.responseBody = responseBody;
+                error.parsedJson = parsedJson;
+
+                throw error;
+            }
+
+            return {
+                response,
+                responseBody,
+                json: parsedJson
+            };
+        }
+
+        // ─── Reusable Ollama API Wrapper (Requirement 8) ───
+        const OllamaAPI = {
+            config: {
+                debug: true // Easy to toggle debugging logs (Requirement 10)
+            },
+
+            // Easy debug log toggler (Requirement 10)
+            log(...args) {
+                if (this.config.debug) {
+                    console.log('%c[Ollama_DEBUG]', 'color: #ff6ad5; font-weight: bold;', ...args);
+                }
+            },
+
+            error(...args) {
+                if (this.config.debug) {
+                    console.error('%c[Ollama_ERROR]', 'color: #ff4444; font-weight: bold;', ...args);
+                }
+            },
+
+            // GET /api/tags - Loads model list (Requirement 5)
+            async getTags() {
+                return requestJson(OLLAMA_ENDPOINTS.tags, { method: 'GET' });
+            },
+
+            // POST /api/chat - Sends message natively and deterministically over NDJSON stream (Requirement 3, 4, 6, 8)
+            async sendChatStream(history, onChunk) {
+                const url = OLLAMA_ENDPOINTS.chat;
+
+                const payload = {
+                    model: activeModel,
+                    messages: history,
+                    stream: true
+                };
+
+                activeAbortController = new AbortController();
+
+                let response;
+
+                try {
+                    response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/x-ndjson'
+                        },
+                        body: JSON.stringify(payload),
+                        signal: activeAbortController.signal
+                    });
+                } catch (cause) {
+                    if (cause.name === 'AbortError') {
+                        throw cause; // Re-throw AbortError directly to preserve name and properties
+                    }
+                    const error = new Error(
+                        `Network request failed before receiving an HTTP response: ${
+                            cause instanceof Error ? cause.message : String(cause)
+                        }`
+                    );
+
+                    error.kind = 'network';
+                    error.endpoint = url;
+                    error.status = null;
+                    error.cause = cause;
+
+                    throw error;
+                }
+
+                if (!response.ok) {
+                    const responseBody = await response.text();
+
+                    const error = new Error(
+                        `HTTP ${response.status} ${response.statusText}`.trim()
+                    );
+
+                    error.kind = 'http';
+                    error.endpoint = url;
+                    error.status = response.status;
+                    error.statusText = response.statusText;
+                    error.responseBody = responseBody;
+
+                    throw error;
+                }
+
+                if (!response.body) {
+                    throw new Error('The browser did not expose a readable response stream.');
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+
+                let buffer = '';
+                let fullContent = '';
+                let finalMetadata = null;
+
+                try {
+                    while (true) {
+                        const { value, done } = await reader.read();
+
+                        if (done) {
+                            break;
+                        }
+
+                        buffer += decoder.decode(value, { stream: true });
+
+                        const lines = buffer.split('\n');
+                        buffer = lines.pop() || '';
+
+                        for (const line of lines) {
+                            const trimmedLine = line.trim();
+
+                            if (!trimmedLine) {
+                                continue;
+                            }
+
+                            let chunk;
+
+                            try {
+                                chunk = JSON.parse(trimmedLine);
+                            } catch (parseError) {
+                                console.warn(
+                                    '[Ollama Stream] Invalid NDJSON line:',
+                                    trimmedLine,
+                                    parseError
+                                );
+                                continue;
+                            }
+
+                            if (chunk.error) {
+                                throw new Error(chunk.error);
+                            }
+
+                            const textChunk = chunk.message?.content || '';
+
+                            if (textChunk) {
+                                fullContent += textChunk;
+
+                                if (typeof onChunk === 'function') {
+                                    onChunk(textChunk, fullContent, chunk);
+                                }
+                            }
+
+                            if (chunk.done) {
+                                finalMetadata = chunk;
+                            }
+                        }
+                    }
+
+                    buffer += decoder.decode();
+
+                    const finalLine = buffer.trim();
+
+                    if (finalLine) {
+                        const chunk = JSON.parse(finalLine);
+
+                        if (chunk.error) {
+                            throw new Error(chunk.error);
+                        }
+
+                        const textChunk = chunk.message?.content || '';
+
+                        if (textChunk) {
+                            fullContent += textChunk;
+
+                            if (typeof onChunk === 'function') {
+                                onChunk(textChunk, fullContent, chunk);
+                            }
+                        }
+
+                        if (chunk.done) {
+                            finalMetadata = chunk;
+                        }
+                    }
+                } finally {
+                    reader.releaseLock();
+                }
+
+                return {
+                    content: fullContent,
+                    metadata: finalMetadata
+                };
+            }
+        };
+
+        let isGenerating = false;
+
+        // Multi-turn chat history array
+        let chatHistory = [
+            { role: 'system', content: SYSTEM_PROMPT }
+        ];
+
+        const chatBox = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const apiStatus = document.getElementById('api-status');
+        const statusDot = document.getElementById('status-dot');
+
+        function escapeHtml(text) {
+            return String(text || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function renderSimpleMarkdown(text) {
+            if (!text) return '';
+
+            // First, escape HTML to prevent XSS
+            let html = escapeHtml(text);
+
+            // 1. Code blocks
+            html = html.replace(/```([\s\S]*?)```/g, (_, code) => {
+                return `<pre class="bg-black text-gray-100 p-3.5 rounded-md overflow-x-auto my-3 border border-[#7700ff]/30 font-mono text-xs shadow-inner"><code>${code.trim()}</code></pre>`;
+            });
+
+            // 2. Inline code
+            html = html.replace(/`([^`]+)`/g, '<code class="bg-[#1e0d30] text-purple-300 px-1.5 py-0.5 rounded text-xs font-mono border border-purple-950">$1</code>');
+
+            // 3. Bold-italic
+            html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="font-bold text-pink-400"><em>$1</em></strong>');
+
+            // 4. Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-purple-300">$1</strong>');
+
+            // 5. Italic
+            html = html.replace(/\*(.*?)\*/g, '<em class="italic text-gray-300">$1</em>');
+
+            // 6. Headers
+            html = html.replace(/^(#{1,6})\s+(.*?)$/gm, (_, hashes, title) => {
+                const level = hashes.length;
+                const sizeClass = level === 1 ? 'text-lg font-bold text-pink-400' : level === 2 ? 'text-base font-bold text-purple-300' : 'text-sm font-bold text-purple-300';
+                return `<h${level} class="${sizeClass} mt-4 mb-2 border-b border-purple-950/40 pb-1">${title}</h${level}>`;
+            });
+
+            // 7. Bullet lists
+            html = html.replace(/^\s*[-*•]\s+(.*?)$/gm, '<li class="list-disc list-inside ml-2 text-gray-300 my-1">$1</li>');
+
+            // 8. Numbered lists
+            html = html.replace(/^\s*(\d+)\.\s+(.*?)$/gm, '<li class="list-decimal list-inside ml-2 text-gray-300 my-1">$2</li>');
+
+            // 9. Newlines
+            html = html.replace(/\n/g, '<br>');
+
+            return html;
+        }
+
+        // Analyzes and outputs precise troubleshooting guides depending on the actual error kind
+        function getDiagnosticAnalysis(error) {
+            if (error.kind === 'network') {
+                return [
+                    '瀏覽器在接收到 HTTP 回應前發生了網路層連線失敗。',
+                    '這並非伺服器回傳 HTTP 404，請勿混淆。',
+                    '請檢查：(1) 目標請求網址是否精確、(2) 跨來源資源共享（CORS）預檢請求（OPTIONS）是否通過、(3) 遠端主機與反向代理是否拒絕連線、以及 (4) 本地端瀏覽協定與瀏覽器擴充功能阻擋。'
+                ].join(' ');
+            }
+
+            if (error.kind === 'http') {
+                return [
+                    `遠端伺服器已回應但回傳了錯誤碼 HTTP ${error.status}。`,
+                    '請檢查伺服器端容器運行狀態、模型載入日誌以及反向代理伺服器（如 Nginx、Apache、Cloudflare）的路由轉發規則是否涵蓋了該特定端點。'
+                ].join(' ');
+            }
+
+            return '發生了未知的客戶端執行階段錯誤。';
+        }
+
+        // Formats detailed error diagnostic panel directly in GUI (Requirement 9)
+        function formatDiagnosticError(error) {
+            const endpoint = error.endpoint || 'Unknown Endpoint';
+            const status = error.status || 'No HTTP response received';
+            const responseBody = escapeHtml(error.responseBody || 'No raw response payload returned.');
+            const parsedJsonStr = error.parsedJson ? escapeHtml(JSON.stringify(error.parsedJson, null, 2)) : 'N/A';
+            const stackTrace = escapeHtml(error.stack || 'No JS execution stack trace caught.');
+            const diagnosis = getDiagnosticAnalysis(error);
+
+            const errorTypeLabel = error.kind === 'network' ? 'Network failure' : error.kind === 'http' ? 'HTTP error' : 'Unknown Error';
+
+            return `
+                <div class="text-left font-mono text-xs space-y-2.5 p-4 bg-[#1a050d] border border-red-500/40 rounded-lg text-red-300 w-full shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                    <div class="font-bold text-red-400 text-sm border-b border-red-900/40 pb-1.5 flex items-center gap-2">
+                        ⚠️ TRANSMISSION PROTOCOL ERROR (${errorTypeLabel.toUpperCase()})
+                    </div>
+                    <div>
+                        <span class="text-red-400 font-bold">[Error Type]:</span>
+                        <span class="text-gray-300">${errorTypeLabel}</span>
+                    </div>
+                    <div>
+                        <span class="text-red-400 font-bold">[Endpoint Target]:</span>
+                        <span class="text-gray-300">${endpoint}</span>
+                    </div>
+                    <div>
+                        <span class="text-red-400 font-bold">[HTTP Status]:</span>
+                        <span class="text-gray-100 font-bold">${status}</span>
+                    </div>
+                    <div>
+                        <span class="text-red-400 font-bold">[Response Body]:</span>
+                        <pre class="bg-black p-2.5 rounded border border-red-950/50 mt-1 overflow-x-auto text-[11px] text-gray-400 leading-normal max-h-32 custom-scrollbar"><code>${responseBody}</code></pre>
+                    </div>
+                    <div>
+                        <span class="text-red-400 font-bold">[Parsed JSON Schema]:</span>
+                        <pre class="bg-black p-2.5 rounded border border-red-950/50 mt-1 overflow-x-auto text-[11px] text-purple-300 leading-normal max-h-32 custom-scrollbar"><code>${parsedJsonStr}</code></pre>
+                    </div>
+                    <div>
+                        <span class="text-red-400 font-bold">[JS Stack Trace]:</span>
+                        <pre class="bg-black p-2.5 rounded border border-red-950/50 mt-1 overflow-x-auto text-[10px] text-red-400/60 leading-normal max-h-40 custom-scrollbar"><code>${stackTrace}</code></pre>
+                    </div>
+                    <div class="border-t border-red-900/30 pt-2 text-[11px] text-gray-400 leading-relaxed">
+                        <b>診斷分析</b>：${diagnosis}
+                    </div>
+                </div>
+            `;
+        }
+
+        function setGeneratingState(state) {
+            isGenerating = state;
+            userInput.disabled = state;
+            if (state) {
+                sendButton.textContent = '停止生成';
+                sendButton.classList.remove('opacity-50', 'cursor-not-allowed'); // Allow clicking to abort!
+                sendButton.setAttribute('onclick', 'stopGeneration()');
+            } else {
+                sendButton.textContent = '傳送指令';
+                sendButton.setAttribute('onclick', 'sendMessage()');
+            }
+        }
+
+        function appendMessage(role, text, isTemp = false) {
+            const div = document.createElement('div');
+
+            let className = 'max-w-[85%] p-3.5 rounded-lg text-sm leading-relaxed chat-row transition-all duration-200 ';
+            if (role === 'user') {
+                className += 'bg-[#15002b] text-gray-100 self-end mr-2 border border-[#7700ff]/60 shadow-[0_0_8px_rgba(119,0,255,0.1)]';
+            } else if (role === 'bot') {
+                className += 'bg-[#0c0515] border border-[#ff6ad5]/35 text-gray-200 self-start ml-2 bot-message shadow-[0_0_8px_rgba(255,106,213,0.03)]';
+            } else if (role === 'error') {
+                className += 'bg-red-950/30 text-red-400 border border-red-900/40 text-center w-full max-w-full my-2 text-xs rounded';
+            } else if (role === 'system') {
+                className += 'text-center text-xs text-purple-400/70 italic w-full max-w-full my-2 border-b border-purple-950/20 pb-2';
+            }
+
+            div.className = className;
+            const id = 'msg-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+            div.id = id;
+
+            if (role === 'bot') {
+                div.innerHTML = renderSimpleMarkdown(text || '');
+            } else if (role === 'error') {
+                div.innerHTML = text || '';
+            } else if (role === 'system') {
+                div.innerHTML = `[SYSTEM_LOG] // ${escapeHtml(text || '')}`;
+            } else {
+                div.textContent = text || '';
+            }
+
+            if (isTemp) {
+                div.dataset.temp = '1';
+                div.classList.add('typing');
+            }
+
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return id;
+        }
+
+        async function checkApiStatus() {
+            try {
+                // Call tags wrapper (Requirement 5)
+                const res = await OllamaAPI.getTags();
+
+                // Dynamically select model if possible from the tags response
+                if (res.json && Array.isArray(res.json.models)) {
+                    const found = res.json.models.find(m => m.name && m.name.includes('dzgg/Gemma-4-Uncensored-HauhauCS-Aggressive:e2b'));
+                    if (found) {
+                        activeModel = found.name;
+                        console.info('[MODEL_SELECT] Dynamically selected model:', activeModel);
+                    } else {
+                        console.warn('[MODEL_SELECT] Qwythos-9B-Uncensored not found in models. Using default:', activeModel);
+                    }
+                }
+
+                apiStatus.textContent = '運作中';
+                apiStatus.className = 'text-green-400 font-bold';
+
+                statusDot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-green-500 pulse-glow';
+            } catch (error) {
+                apiStatus.textContent = '離線';
+                apiStatus.className = 'text-red-500 font-bold';
+
+                statusDot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-red-500 pulse-glow-red';
+                console.error('API 狀態檢查失敗:', error);
+
+                // Show deep network diagnostics trigger block
+                appendDiagnosticsTrigger();
+            }
+        }
+
+        function appendDiagnosticsTrigger() {
+            if (document.getElementById('diag-trigger-box')) return;
+
+            const div = document.createElement('div');
+            div.className = 'bg-[#15050d] text-red-300 border border-red-900/40 p-4 rounded-lg text-xs chat-row w-full max-w-full my-3 flex flex-col gap-2.5 shadow-[0_0_10px_rgba(239,68,68,0.05)]';
+            div.id = 'diag-trigger-box';
+            div.innerHTML = `
+                <div class="flex items-center gap-2 text-red-400 font-bold tracking-wider text-sm">
+                    ⚠️ ⚠️ 偵測到與 AI 安全伺服器連線異常 (離線狀態)
+                </div>
+                <p class="text-gray-400 leading-relaxed text-xs">這通常是由於跨來源資源共享（CORS）限制、本地瀏覽協定安全限制，或是遠端主機 SSL 信賴鏈中斷所致。您可以使用我們內建的安全通訊診斷探針分析精確原因：</p>
+                <div>
+                    <button onclick="runDiagnostics()" class="text-xs bg-red-950/50 hover:bg-red-900/60 border border-red-700/50 hover:border-red-500 text-red-200 py-2 px-4 rounded transition font-mono tracking-wide">
+                        ⚡ 執行深度連線診斷 (Diagnostics Probe)
+                    </button>
+                </div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function runDiagnostics() {
+            const triggerBox = document.getElementById('diag-trigger-box');
+            const triggerBtn = triggerBox ? triggerBox.querySelector('button') : null;
+            if (triggerBtn) {
+                triggerBtn.disabled = true;
+                triggerBtn.textContent = '🔍 探針傳輸中...';
+            }
+
+            appendMessage('system', '================ 開始安全通訊協定診斷 (DIAGNOSTICS START) ================');
+
+            // 1. Check protocol
+            const protocol = window.location.protocol;
+            if (protocol === 'file:') {
+                appendMessage('error', `🔴 [協定檢測] 本地檔案協議 (file://)<br>您的瀏覽器目前直接開啟本地 HTML 檔案。現代瀏覽器基於同源政策（Same-Origin Policy），會<b>徹底封鎖</b>所有從本地檔案發送到外部 API (${OLLAMA_ENDPOINTS.tags}) 的 fetch 請求，這會 100% 導致 AI 顯示「離線」。<br><br>👉 <b>修復方案</b>：請在專案目錄下啟動一個本地網頁伺服器（例如在終端機執行 <code>python -m http.server 8000</code>），然後在瀏覽器輸入 <b>http://localhost:8000/main/base/projects/ollama/</b> 來瀏覽此網頁，即可解除封鎖。`);
+            } else {
+                appendMessage('system', `🟢 [協定檢測] 網頁伺服器模式 (${protocol}) - 正常。`);
+            }
+
+            // 2. Test Fetch with CORS
+            appendMessage('system', '正在向遠端安全主機發送標準 CORS API 握手請求...');
+            let corsSuccess = false;
+            try {
+                const res = await OllamaAPI.getTags();
+                corsSuccess = true;
+                appendMessage('system', '🟢 [CORS 檢測] 標準 CORS 握手成功！伺服器已正常回傳模型清單。');
+            } catch (err) {
+                appendMessage('system', `🟡 [CORS 檢測] 標準 CORS 握手失敗 (${err.message})。正在切換 Opaque 探針進行深度比對...`);
+            }
+
+            if (corsSuccess) {
+                appendMessage('system', '================ 診斷完成：通道一切正常 ================');
+                // Set status back to online
+                apiStatus.textContent = '運作中';
+                apiStatus.className = 'text-green-400 font-bold';
+                statusDot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-green-500 pulse-glow';
+                if (triggerBox) triggerBox.remove();
+                return;
+            }
+
+            // 3. Test Fetch with NO-CORS (CORS Bypass Probe)
+            appendMessage('system', '正在發送 Opaque 深層探針（繞過瀏覽器跨網域安全機制）...');
+            try {
+                // Fetch in no-cors mode resolves if host is alive but CORS is blocked
+                await fetch(OLLAMA_ENDPOINTS.tags, { mode: 'no-cors' });
+                appendMessage('error', `🔴 [跨網域檢測] 伺服器端 CORS 未配置！<br><b>診斷結果</b>：探針成功抵達遠端主機，但被您的瀏覽器因 CORS（Cross-Origin Resource Sharing）安全原因拒絕讀取。<br><br>👉 <b>修復方案 (伺服器管理者端)</b>：<br>1. 如果您是伺服器管理者，請確保啟動 Ollama 時設定了環境變數：<br><code class="bg-black text-pink-400 p-2 rounded font-mono text-xs block my-1">export OLLAMA_ORIGINS="*"</code>並重新啟動 Ollama。<br>2. 若使用 Nginx 進行反向代理，請在設定檔的 location 區塊中加入以下跨網域請求標頭：<br><pre class="bg-black text-gray-400 p-2 rounded text-xs font-mono my-1 border border-red-950 overflow-x-auto">add_header 'Access-Control-Allow-Origin' '*' always;
+add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization' always;</pre>`);
+            } catch (err) {
+                // If even no-cors fails, the host is unreachable
+                appendMessage('error', `🔴 [網路路由檢測] 伺服器完全無法存取！<br><b>診斷結果</b>：遠端主機 (${OLLAMA_ENDPOINTS.tags}) 目前可能處於關機、DNS 解析失敗、SSL 憑證失效、或防火牆完全封鎖狀態。<br><br>👉 <b>修復方案</b>：<br>1. 請在伺服器端終端機執行 <code>curl -I https://ollama.bones-security.xyz/api/tags</code> 檢查本機狀態。<br>2. 如果您的伺服器使用的是 <b>Cloudflare</b> 等 CDN 代理保護，請確認 SSL/TLS 加密模式設定為<b>「完整 (Full)」或「完全 (嚴格) (Full (Strict))」</b>，否則 Cloudflare 可能因為找不到合法的來源證書而回傳 HTTP 525/526，導致瀏覽器因 SSL 信賴鏈中斷阻擋連線。`);
+            }
+
+            appendMessage('system', '================ 診斷流程結束，請參閱上述修復建議 ================');
+            if (triggerBtn) {
+                triggerBtn.textContent = '❌ 診斷完成';
+            }
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message || isGenerating) return;
+
+            appendMessage('user', message);
+            userInput.value = '';
+            setGeneratingState(true);
+
+            // Add user message to thread history
+            chatHistory.push({ role: 'user', content: message });
+
+            const loadingId = appendMessage('bot', '', true);
+            const outputElement = document.getElementById(loadingId);
+
+            let fullContent = '';
+
+            try {
+                // Call unified Ollama wrapper with NDJSON stream (Requirement 6, 8)
+                const result = await OllamaAPI.sendChatStream(
+                    chatHistory,
+                    (_chunk, accumulatedContent) => {
+                        fullContent = accumulatedContent;
+
+                        if (!outputElement) return;
+
+                        outputElement.classList.remove('typing');
+                        scheduleStreamRender(outputElement, accumulatedContent);
+                    }
+                );
+
+                fullContent = result.content;
+
+                if (!fullContent.trim()) {
+                    fullContent = '模型沒有回傳文字內容。';
+                }
+
+                if (outputElement) {
+                    outputElement.classList.remove('typing');
+                    outputElement.removeAttribute('data-temp');
+                    outputElement.innerHTML = renderSimpleMarkdown(fullContent);
+                }
+
+                // Add assistant response to thread history
+                chatHistory.push({ role: 'assistant', content: fullContent });
+            } catch (error) {
+                const isAbort = error.name === 'AbortError' || error.message?.includes('aborted');
+
+                if (isAbort) {
+                    if (fullContent.trim()) {
+                        // Keep the partially generated text in DOM and push to chatHistory
+                        if (outputElement) {
+                            outputElement.classList.remove('typing');
+                            outputElement.removeAttribute('data-temp');
+                            outputElement.innerHTML = renderSimpleMarkdown(fullContent) +
+                                '<br><span class="text-xs text-yellow-500 italic">// 生成已由使用者停止。</span>';
+                        }
+                        chatHistory.push({ role: 'assistant', content: fullContent + '\n\n[生成已由使用者停止。]' });
+                    } else {
+                        // No content generated yet
+                        if (outputElement) outputElement.remove();
+                        chatHistory.pop(); // Remove user message from history if they aborted before any response
+                        appendMessage('error', '生成已由使用者停止。');
+                    }
+                } else {
+                    // General connection/API errors
+                    if (outputElement) outputElement.remove();
+                    chatHistory.pop(); // Remove the failed user message from thread history
+                    appendMessage('error', formatDiagnosticError(error));
+                    console.error('API Transmission Failure:', error);
+                }
+            } finally {
+                activeAbortController = null;
+                setGeneratingState(false);
+                userInput.focus();
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        function clearChat() {
+            if (isGenerating) return;
+            chatBox.innerHTML = '';
+            chatHistory = [
+                { role: 'system', content: SYSTEM_PROMPT }
+            ];
+            appendMessage('system', '對話紀錄已安全清除。');
+            userInput.value = '';
+            userInput.focus();
+        }
+
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        window.addEventListener('load', async () => {
+            appendMessage('system', '本模型基於開源模型 `dzgg/Gemma-4-Uncensored-HauhauCS-Aggressive:e2b` 進行整合與優化。');
+            await checkApiStatus();
+            userInput.focus();
+        });
+    </script>
+</body>
+</html>

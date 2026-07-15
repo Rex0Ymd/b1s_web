@@ -1,41 +1,69 @@
 <!DOCTYPE html>
-<link rel="icon" href="../../../images/b1s.png" type="image/png">
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ProtonMail</title>
-  <link rel="stylesheet" href="../../../CSS/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProtonMail 安全性與隱私分析 - Bones Security Technology</title>
+  <link rel="icon" href="../../../images/b1s.png" type="image/png">
+  <link rel="stylesheet" href="../../../CSS/style.css">
 </head>
 <body>
   <header>
     <h1>BONES SECURITY TECHNOLOGY</h1>
     <nav>
-      <a href="../../../pages/mainpage">首頁</a>
-      <a href="../../../pages/services">文章列表</a>
+      <a href="../../../pages/mainpage/">首頁</a>
+      <a href="../../../pages/about/">關於</a>
+      <a href="../../../pages/projects/">作品</a>
+      <a href="../../../pages/services/">服務</a>
+      <a href="../../../pages/contact/">聯絡</a>
     </nav>
   </header>
-  <section class="hero2">
-    <h2>ProtonMail</h2>
-  </section>
-  
-    <section class="description">
-      <h2>ProtonMail 安全性與隱私性分析</h2>
-      <ul>
-        <li><strong>端對端加密</strong>：發送者與接收者間郵件內容使用內建 PGP 加密，伺服器無法解密。</li>
-        <li><strong>零存取架構</strong>：使用者密碼永不傳到伺服器，解密在本地端完成。</li>
-        <li><strong>瑞士法律保護</strong>：需瑞士法院授權才能調閱資料。</li>
-        <li><strong>支援匿名註冊與 Tor 存取</strong>：可使用 onion 網址深層匿名訪問。</li>
-        <li><strong>開源加密技術</strong>：使用 OpenPGP.js 並開源部分元件。</li>
-        <li><strong>潛在限制</strong>：若對方非 Proton 用戶，需要手動密碼傳遞；信件標題未加密。</li>
-      </ul>
-      <h3>總結：</h3>
-      <p>ProtonMail 是極具信賴性的隱私電郵服務，搭配良好操作習慣能有效保護匿名性與資訊安全。</p>
-      <nav><a href="https://account.proton.me/zh-tw/mail">--> 前往protonmail <--</a></nav>
+
+  <main class="container">
+    <section class="hero2">
+      <h2>ProtonMail 安全性與隱私深度分析</h2>
+      <p>端對端加密信件、零知識架構與主權法規抗審查機制</p>
     </section>
-    
+
+    <article class="description">
+      <h2>ProtonMail 安全防禦分析</h2>
+      <p>
+        電子郵件通常是互聯網通訊中最脆弱的一環。傳統郵件服務商（如 Gmail、Outlook）擁有對您信件內容的完全存取權，並常基於廣告投放或審查目的對您的信件進行自動化掃描。ProtonMail 作為世界頂級隱私郵件，通過多重加密技術與瑞士法律為用戶提供極致的信息安全保障。
+      </p>
+
+      <h3>核心安全優勢與機制：</h3>
+      <ul>
+        <li><strong>端對端加密 (End-to-End Encryption)</strong>：如果通訊雙方均使用 ProtonMail，郵件在發送前會在客戶端利用 PGP 算法自動加密，傳輸和存儲全程皆為密文。只有接收方使用其私鑰才能解碼。</li>
+        <li><strong>零存取架構 (Zero-Access Architecture)</strong>：您的帳戶密碼會衍生出兩組密鑰：一組用於登入驗證，另一組在本地用於解密信箱。ProtonMail 的伺服器既不掌握您的解密密鑰，也無法讀取您的歷史存檔信件，從根源避免了伺服器被駭或內鬼竊密導致的洩露。</li>
+        <li><strong>瑞士主權法律保護</strong>：ProtonMail 總部位於瑞士，其所有數據均存儲在瑞士當地的地下安全要塞中。任何外部國家司法機關或執法部門想要調閱數據，必須通過瑞士法院极其嚴格的審查並正式簽發司法授權命令。</li>
+        <li><strong>支援 onion 匿名網路訪問</strong>：ProtonMail 官方提供專屬的 .onion 洋蔥域名。用戶可配合 Tor 瀏覽器，在不暴露真實 IP 的情況下註冊與使用郵箱，實現深層次行為匿名。</li>
+        <li><strong>代碼開源與安全合規</strong>：其核心加密庫 OpenPGP.js 完全開源，並經受了國際知名安全審查機構的多次實戰滲透審查，無隱蔽後門。</li>
+      </ul>
+
+      <h3>潛在限制與安全漏洞：</h3>
+      <p>
+        雖然 ProtonMail 架構極其安全，但並非萬無一失。用戶在使用時必須注意以下威脅：
+      </p>
+      <ul>
+        <li><strong>元數據（Metadata）未加密</strong>：由於 SMTP 標準限制，郵件的「寄件人」、「收件人」、「發送時間」和「郵件主題（Subject）」是無法進行端對端加密的，仍可能被流量分析獲取。</li>
+        <li><strong>與非 ProtonMail 郵箱通信</strong>：如果對方使用的是普通郵箱，預設通信是以明文進行傳輸。此時必須使用 ProtonMail 提供的「加密發送」功能（手動約定對稱密鑰），否則通信隱私將大大降低。</li>
+      </ul>
+
+      <p style="text-align: center; margin-top: 1.5rem; margin-bottom: 1rem;">
+        <a href="https://account.proton.me/zh-tw/mail" target="_blank" rel="noopener noreferrer" class="cta-button">前往 ProtonMail 官方網站</a>
+      </p>
+    </article>
+
+    <div style="text-align: center; margin-top: 2rem; margin-bottom: 3rem;">
+      <a href="../../../pages/services/" class="cta-button">返回安全指南列表</a>
+    </div>
+  </main>
+
   <footer>
-    <p>&copy; 2025 Bones Security Technology. All rights reserved.</p>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
   </footer>
 </body>
 </html>

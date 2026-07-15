@@ -1,51 +1,79 @@
 <!DOCTYPE html>
-<link rel="icon" href="../../../images/b1s.png" type="image/png">
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tor Network</title>
-  <link rel="stylesheet" href="../../../CSS/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tor 網路安全性、匿名性與可偵測性分析 - Bones Security Technology</title>
+  <link rel="icon" href="../../../images/b1s.png" type="image/png">
+  <link rel="stylesheet" href="../../../CSS/style.css">
 </head>
 <body>
   <header>
     <h1>BONES SECURITY TECHNOLOGY</h1>
     <nav>
-      <a href="../../../pages/mainpage">首頁</a>
-      <a href="../../../pages/services">文章列表</a>
+      <a href="../../../pages/mainpage/">首頁</a>
+      <a href="../../../pages/about/">關於</a>
+      <a href="../../../pages/projects/">作品</a>
+      <a href="../../../pages/services/">服務</a>
+      <a href="../../../pages/contact/">聯絡</a>
     </nav>
   </header>
 
-  <section class="hero2">
-    <h2>Tor 網路安全性與匿名性分析</h2>
-  </section>
+  <main class="container">
+    <section class="hero2">
+      <h2>Tor 洋蔥路由安全性與匿名性剖析</h2>
+      <p>去中心化分層加密、隱蔽伺服器（.onion）與網絡特徵對抗分析</p>
+    </section>
 
-  <section class="description">
-    <h2>Tor Network 安全性、匿名性與可被偵測性分析</h2>
-    <ul>
-      <li><strong>分層加密傳輸（Onion Routing）</strong>：數據在三個隨機節點之間多層加密，每一層只知道上下游節點，無法得知完整來源與目的地。</li>
-      <li><strong>節點分布全球</strong>：Tor 網路節點由志願者提供，沒有單一控制點，提升去中心化特性與抵抗審查能力。</li>
-      <li><strong>流量難以攔截</strong>：傳輸經過多跳轉，且每一跳都重新加密，增加被攔截與流量分析的難度。</li>
-      <li><strong>支援隱藏服務（.onion 網站）</strong>：提供完全匿名的伺服器端，伺服器真實 IP 不會曝光。</li>
-      <li><strong>潛在弱點</strong>：若進出口節點遭監控，配合流量大小與時間特徵分析（Traffic Correlation Attack），仍有一定機率推測用戶身份。</li>
-      <li><strong>被偵測風險</strong>：Tor 流量模式特徵明顯，雖然加密，但可被網路監控系統標記與封鎖（如中國防火長城 GFW 封鎖 Tor 使用）。</li>
-    </ul>
+    <article class="description">
+      <h2>Tor Network 網絡安全剖析</h2>
+      <p>
+        Tor（洋蔥路由器，The Onion Router）是全球最受公認與信賴的匿名上網工具。它通過全球志願者自發運行的一萬多個中繼節點，將使用者的網絡流量進行多層分組加密和隨機跳轉，隱匿您的真實 IP 地址和地理位置，對抗任何跨國網絡審查與監控系統。
+      </p>
 
-    <h3>總結：</h3>
-    <ul>
-      <li>匿名性：高（但需避免與真實身份資料交叉）</li>
-      <li>安全性：中高（進出口節點為潛在風險點）</li>
-      <li>可被偵測性：高（流量特徵易被辨識）</li>
-      <li>適用場景：需要突破審查、匿名通訊、暗網瀏覽</li>
-      <li>建議：搭配 VPN / 多重跳板使用以增強匿名層次</li>
-    </ul>
+      <h3>核心技術優勢與匿名機制：</h3>
+      <ul>
+        <li><strong>洋蔥分層加密 (Onion Routing)</strong>：使用者的流量在出站前會被進行三層隨機金鑰加密，然後依次通過三個節點：
+          <br>1. <strong>入口/守衛節點 (Guard)</strong>：知道您的真實 IP，但不知道您要訪問的內容和終點。
+          <br>2. <strong>中間節點 (Middle)</strong>：只知道流量的上游和下游，不知道真實 IP 和訪問終點。
+          <br>3. <strong>出口節點 (Exit)</strong>：負責將解密後的流量發送至目標網站。它知道訪問的終點與內容（若未加 HTTPS 則為明文），但絕不可能得知發送方的真實 IP。
+        </li>
+        <li><strong>去中心化全球中繼</strong>：Tor 節點分佈於世界各地，不受任何單一主權機構、科技巨頭或情報組織的直接控制，具備極強的抗審查與反追蹤彈性。</li>
+        <li><strong>隱藏服務 (Hidden Services / .onion 網站)</strong>：提供完全匿名的端對端網絡架構。用戶可以運行 <code>.onion</code> 域名網站，使伺服器的真實 IP 永遠不被洩露，保障信息發佈者與瀏覽者的雙向高度匿名。</li>
+      </ul>
 
-    <nav><a href="https://www.torproject.org/">--> Tor 官方網站 <--</a></nav>
-  </section>
+      <h3>潛在弱點與網絡對抗威脅：</h3>
+      <p>
+        儘管 Tor 設計得近乎完美，但在實戰中仍面臨以下高級技術挑戰：
+      </p>
+      <ul>
+        <li><strong>流量關聯性分析 (Traffic Correlation Attacks)</strong>：如果某個強大機構（如跨國情報網路）能夠同時監控您的入口節點流量與目標網站的出口流量，通過大數據對流量的大小、波峰波谷及時間戳特徵進行交叉比對，將有一定機率推導出用戶身分。</li>
+        <li><strong>惡意出口節點監聽</strong>：任何人都可以加入 Tor 網絡作為節點。如果出口節點由惡意攻擊者運行，且您訪問的網站未使用 HTTPS 加密，則通訊明文可能被出口節點監聽、篡改或劫持。</li>
+        <li><strong>顯著的流量模式特徵（封鎖與干擾）</strong>：由於 Tor 協議特徵明顯，各國網絡審查防火牆（如中國 GFW）能輕易識別 Tor 連線流量並進行全網干擾與封鎖。此時，用戶必須啟用 Tor 內置的隱蔽橋接器（如 obfs4、meek_azure 或 Snowflake）對流量進行進一步混淆。</li>
+      </ul>
+
+      <h3>綜合安全總結：</h3>
+      <ul>
+        <li><strong>IP 匿名性等級</strong>：極高（如果操作得當，如不使用真實帳號登入、不混用常規瀏覽器等）</li>
+        <li><strong>傳輸安全性</strong>：中高（取決於通訊鏈路是否啟用 HTTPS 協議，且防禦惡意出口節點）</li>
+        <li><strong>被識別特徵度</strong>：高（流量易被網絡電訊商或國家級 DPI 系統標記，建議日常搭配抗混淆橋接器或多重 VPN 鏈路使用）</li>
+      </ul>
+
+      <p style="text-align: center; margin-top: 1.5rem; margin-bottom: 1rem;">
+        <a href="https://www.torproject.org/" target="_blank" rel="noopener noreferrer" class="cta-button">前往 Tor Project 官方網站</a>
+      </p>
+    </article>
+
+    <div style="text-align: center; margin-top: 2rem; margin-bottom: 3rem;">
+      <a href="../../../pages/services/" class="cta-button">返回安全指南列表</a>
+    </div>
+  </main>
 
   <footer>
-    <p>&copy; 2025 Bones Security Technology. All rights reserved.</p>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
   </footer>
 </body>
 </html>
-

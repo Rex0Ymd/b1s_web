@@ -1,35 +1,96 @@
 <!DOCTYPE html>
-<link rel="icon" href="../../images/b1s.png" type="image/png">
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>作品集 - Bones Security Technology</title>
+  <link rel="icon" href="../../images/b1s.png" type="image/png">
   <link rel="stylesheet" href="../../CSS/style.css">
 </head>
 <body>
   <header>
     <h1>BONES SECURITY TECHNOLOGY</h1>
     <nav>
-      <a href="../mainpage">首頁</a>
-      <a href="../about">關於</a>
-      <a href="../projects">作品</a>
-      <a href="../services">服務</a>
-      <a href="../contact">聯絡</a>
+      <a href="../mainpage/">首頁</a>
+      <a href="../about/">關於</a>
+      <a href="../projects/" class="active">作品</a>
+      <a href="../services/">服務</a>
+      <a href="../contact/">聯絡</a>
     </nav>
   </header>
-  <main class="description">
-    <h2>專案展示</h2>
-    <ul>
-    <nav>
-      <li><a href="../../base/projects/chat.app">匿名聊天室</a></li>
-      <li><a>自動IP代理（製作中）</a></li>
-      <li><a href="../../base/projects/project.keyboard">即時加密聊天鍵盤</a></li>
-      <li><a>加密貨幣混幣器（製作中）</a></li>
-    </nav>
-    </ul>
+
+  <main class="container">
+    <section class="hero2">
+      <h2>專案展示</h2>
+      <p>隱私與防追蹤技術的實戰武器庫</p>
+    </section>
+
+    <section class="description">
+      <p>我們致力於開發端對端零知識安全系統。所有專案代碼均遵循嚴格的安全審查原則，不包含任何後門，且不依賴第三方信任鏈。以下為我們的最新開發進度與發佈成果：</p>
+      <div class="list-container">
+        <!-- Bones-Security AI -->
+        <a href="../../base/projects/ollama/" class="list-item-card" aria-label="前往 Bones-Security AI 專案頁面">
+          <div class="list-item-title">
+            <span>Bones-Security AI</span>
+            <span class="badge badge-released">已發佈</span>
+          </div>
+          <p class="list-item-desc">
+            Bones-Security AI 是一套專為紅隊測試、漏洞研究與攻擊鏈分析打造的無審查模型AI助手，可協助進行漏洞驗證、PoC 開發、滲透測試規劃與技術風險分析，可回答大多數AI保護機制下拒絕回答的問題。
+          </p>
+        </a>
+
+        <!-- 匿名聊天室 -->
+        <a href="../../base/projects/chat.app/" class="list-item-card" aria-label="前往 匿名聊天室 專案頁面">
+          <div class="list-item-title">
+            <span>端對端加密匿名聊天室</span>
+            <span class="badge badge-released">已發佈</span>
+          </div>
+          <p class="list-item-desc">
+            採用端對端零知識加密架構的實時聊天系統。數據於客戶端加密後通過中繼伺服器傳輸，關閉網頁即瞬間銷毀所有在線痕跡與金鑰。
+          </p>
+        </a>
+
+        <!-- 即時加密聊天鍵盤 -->
+        <a href="../../base/projects/project.keyboard/" class="list-item-card" aria-label="前往 即時加密聊天鍵盤 專案頁面">
+          <div class="list-item-title">
+            <span>即時加密聊天鍵盤 (Android)</span>
+            <span class="badge badge-download">下載可用</span>
+          </div>
+          <p class="list-item-desc">
+            一款直接嵌入 Android 系統層的加密輸入法。無須在多個通訊程式間頻繁切換，內置多層加密與獨創 Emoji 表情混淆，實現即時聊天加密。
+          </p>
+        </a>
+
+        <!-- 自動IP代理 -->
+        <div class="list-item-card" style="cursor: default; border-left-color: var(--color-purple-dark); opacity: 0.75;">
+          <div class="list-item-title">
+            <span style="color: #aaa;">自動 IP 代理系統</span>
+            <span class="badge badge-wip">開發中 (WIP)</span>
+          </div>
+          <p class="list-item-desc">
+            基於深度暗網 Tor 核心協議設計，支持後台守護進程，定時、自動、無感切換代理 IP。有效瓦解網路服務商與大型廣告網路的行為模式特徵分析。
+          </p>
+        </div>
+
+        <!-- 去中心化跨鏈混幣器 -->
+        <div class="list-item-card" style="cursor: default; border-left-color: var(--color-purple-dark); opacity: 0.75;">
+          <div class="list-item-title">
+            <span style="color: #aaa;">去中心化跨鏈混幣器</span>
+            <span class="badge badge-wip">開發中 (WIP)</span>
+          </div>
+          <p class="list-item-desc">
+            運用高匿名隱私中繼技術，跨鏈橋流轉金流斷點。為您的加密資產提供鏈上溯源切斷防線，有效防止因「黑 U」或關聯標記導致的資產凍結。
+          </p>
+        </div>
+      </div>
+    </section>
   </main>
+
   <footer>
-    <p>&copy; 2025 Bones Security Technology</p>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
   </footer>
 </body>
 </html>

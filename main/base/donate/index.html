@@ -1,50 +1,107 @@
 <!DOCTYPE html>
-<link rel="icon" href="../../images/b1s.png" type="image/png">
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bones Security Technology</title>
+  <title>匿名贊助 - Bones Security Technology</title>
+  <link rel="icon" href="../../images/b1s.png" type="image/png">
   <link rel="stylesheet" href="../../CSS/style.css">
-  <style>
-    .des-img {
-      top: 30%;
-      width: 350px; /* 可依圖調整大小 */
-      opacity: 0.7;
-    }
-    .des-img.mid{
-      left: 70%;
-    }
-    
-    .description2 {
-      max-width: 1000px;
-      margin: 2rem auto;
-      padding: 1rem;
-      background-color: #1a1a1a;
-      border-radius: 5px;
-    }
-    .description2 h2 {
-      color: #9b59b6;
-    }
-    .description2 p {
-      line-height: 1.6;
-    }
-  </style>
 </head>
 <body>
   <header>
     <h1>BONES SECURITY TECHNOLOGY</h1>
     <nav>
-      <a href="../../pages/mainpage">首頁</a>
-      <a href="../../pages/contact">聯絡</a>
+      <a href="../../pages/mainpage/">首頁</a>
+      <a href="../../pages/about/">關於</a>
+      <a href="../../pages/projects/">作品</a>
+      <a href="../../pages/services/">服務</a>
+      <a href="../../pages/contact/">聯絡</a>
     </nav>
   </header>
-  <main class="description2">
-    <h2>以XMR匿名贊助</h2>
-    <img src="../../images/XMR-request.png" alt="圖片置中" class="des-img mid">
-    <p>XMR地址:4B6wtMzP2HEh1bvC3TfoxJH3CSGSBKpfh4hKhPpZVTqZDhK3isVsyxibwmeDaNtPoeipRawK8MSNK4hF6oafrWteE3mTRmW</p>
+
+  <main class="container">
+    <section class="hero2">
+      <h2>以 XMR 門羅幣進行匿名贊助</h2>
+      <p>您的支持是我們開發更多匿名與加密武器的唯一動力</p>
+    </section>
+
+    <section class="description">
+      <h2>門羅幣 (Monero) 匿名贊助</h2>
+      <p>
+        Bones Security Technology 是一個完全獨立的非營利技術工作室。為了不向金流審查與追蹤妥協，我們不接受任何法幣或中心化代幣贊助，僅接受具備強隱私特性的門羅幣（XMR）。
+      </p>
+
+      <div style="text-align: center; margin: 2rem 0;">
+        <img src="../../images/XMR-request.png" alt="門羅幣 (Monero XMR) 贊助收款二維碼" class="des-img mid" style="border: 1px solid var(--color-purple-neon); background-color: white; padding: 0.5rem; max-width: 200px;">
+      </div>
+
+      <div class="crypto-box">
+        <p class="crypto-label">XMR 門羅幣收款地址 (點擊下方按鈕或選取複製)</p>
+        <div class="crypto-address-wrapper">
+          <code class="crypto-address" id="xmr-address">4B6wtMzP2HEh1bvC3TfoxJH3CSGSBKpfh4hKhPpZVTqZDhK3isVsyxibwmeDaNtPoeipRawK8MSNK4hF6oafrWteE3mTRmW</code>
+          <button class="btn-copy" onclick="copyAddress(this)" aria-label="複製門羅幣收款地址">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" style="display: inline-block; vertical-align: middle;">
+              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+            </svg>
+            <span>複製門羅幣地址</span>
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem; font-size: 0.9rem; color: #888;">
+        <p><strong>為什麼只接受門羅幣？</strong></p>
+        <p>
+          一般的加密貨幣（如比特幣、USDT）其區塊鏈帳本是完全公開的，任何機構均可對其進行終身金流追蹤與關聯。而門羅幣採用環形簽名、隱蔽地址和環形機密交易技術，能夠在協議層保障發送者、接收者及交易金額完全隱匿，是保障雙方隱私的最佳工具。
+        </p>
+      </div>
+    </section>
   </main>
+
   <footer>
-    <p>&copy; 2025 Roger Security Technology. All rights reserved.</p>
+    <p>&copy; <span id="copyright-year">2026</span> Bones Security Technology. All rights reserved.</p>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+      function copyAddress(button) {
+        const addressText = "4B6wtMzP2HEh1bvC3TfoxJH3CSGSBKpfh4hKhPpZVTqZDhK3isVsyxibwmeDaNtPoeipRawK8MSNK4hF6oafrWteE3mTRmW";
+        navigator.clipboard.writeText(addressText).then(() => {
+          const span = button.querySelector('span');
+          const originalText = span.textContent;
+          span.textContent = "已複製！";
+          button.style.backgroundColor = "#00e676";
+          button.style.borderColor = "#00e676";
+          button.style.boxShadow = "0 0 10px rgba(0, 230, 118, 0.4)";
+          setTimeout(() => {
+            span.textContent = originalText;
+            button.style.backgroundColor = "";
+            button.style.borderColor = "";
+            button.style.boxShadow = "";
+          }, 2000);
+        }).catch(err => {
+          console.error("複製失敗", err);
+          // Fallback copy
+          const textarea = document.createElement("textarea");
+          textarea.value = addressText;
+          textarea.style.position = "absolute";
+          textarea.style.left = "-9999px";
+          document.body.appendChild(textarea);
+          textarea.select();
+          try {
+            document.execCommand("copy");
+            const span = button.querySelector('span');
+            span.textContent = "已複製！";
+            button.style.backgroundColor = "#00e676";
+            setTimeout(() => {
+              span.textContent = "複製門羅幣地址";
+              button.style.backgroundColor = "";
+            }, 2000);
+          } catch (e) {
+            alert("複製失敗，請手動選取地址複製！");
+          }
+          document.body.removeChild(textarea);
+        });
+      }
+    </script>
   </footer>
 </body>
+</html>
