@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat - Qwythos - Bones Security Technology</title>
+    <title>AI Chat - Bones-AI - Bones Security Technology</title>
     <link rel="icon" href="../../../images/b1s.png" type="image/png">
     <link rel="stylesheet" href="../../../CSS/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -302,7 +302,8 @@
                 const payload = {
                     model: activeModel,
                     messages: history,
-                    stream: true
+                    stream: true,
+                    think: false
                 };
 
                 activeAbortController = new AbortController();
@@ -647,7 +648,7 @@
                         activeModel = found.name;
                         console.info('[MODEL_SELECT] Dynamically selected model:', activeModel);
                     } else {
-                        console.warn('[MODEL_SELECT] Qwythos-9B-Uncensored not found in models. Using default:', activeModel);
+                        console.warn('[MODEL_SELECT] dzgg/Gemma-4-Uncensored-HauhauCS-Aggressive:e2b not found in models. Using default:', activeModel);
                     }
                 }
 
